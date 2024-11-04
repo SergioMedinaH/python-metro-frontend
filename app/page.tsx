@@ -142,7 +142,7 @@ const transbordos: Transbordo[] = [
   }
   const [resultado, setResultado] = useState<ApiResponse>();
   const [loading, setLoading] = useState(false);
-
+  /*
   const handleSubmit = async () => {
     setLoading(true);
     try {
@@ -161,7 +161,34 @@ const transbordos: Transbordo[] = [
     } finally {
       setLoading(false); // Desactivar estado de carga
     }
+  };*/
+
+  const handleSubmit = async () => {
+    setLoading(true);
+    try {
+      // Construir la URL con los parámetros de la solicitud GET
+      const url = `https://python-metro-api.vercel.app/api?paradaOrigen=${encodeURIComponent(paradaOrigen)}&paradaDestino=${encodeURIComponent(paradaDestino)}`;
+
+      // Realizar la solicitud GET a la API
+      const response = await fetch(url);
+
+      // Verificar si la respuesta fue exitosa
+      if (!response.ok) {
+        throw new Error('Error en la solicitud a la API');
+      }
+
+      // Parsear la respuesta como JSON
+      const data: ApiResponse = await response.json();
+      setResultado(data);
+      
+    } catch (error) {
+      // Manejar errores en la solicitud
+      console.error("Error fetching route:", error);
+    } finally {
+      setLoading(false); // Desactivar estado de carga
+    }
   };
+
   const LimpiarResultado = () => {
     setParadaOrigen('');
     setParadaDestino('');
