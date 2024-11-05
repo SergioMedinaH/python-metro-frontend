@@ -1,6 +1,8 @@
 'use client';
 
 import 'leaflet/dist/leaflet.css';
+import 'leaflet-defaulticon-compatibility/dist/leaflet-defaulticon-compatibility.webpack.css';
+import 'leaflet-defaulticon-compatibility';
 import { MapContainer, TileLayer, Marker, Popup , Polyline, Tooltip} from 'react-leaflet';
 import L from 'leaflet';
 import { Marcador } from '@/components/marcador';
@@ -44,9 +46,13 @@ const MapComponent = ({paradas, onSelectOrigen,onSelectDestino, trayecto, transb
 
     const bounds = {
     northEast: [center[0] + radiusInDegrees, center[1] + radiusInDegrees],
-    southWest: [center[0] - radiusInDegrees, center[1] - radiusInDegrees],
+    southWest: [center[0] - radiusInDegrees, center[1] - radiusInDegrees],    
     };
+    console.log("Hola")
     return (
+      <MapContainer></MapContainer>
+    )
+    {/*
         <MapContainer 
         center={center} 
         zoom={15} 
@@ -60,7 +66,7 @@ const MapComponent = ({paradas, onSelectOrigen,onSelectDestino, trayecto, transb
           url="https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png" // Estilo CartoDB Positron
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>'
         />
-        {/*Metro entero*/}
+        
         {trayecto.length === 0 && paradas && paradas.map((parada) => (
           <Marcador
             key={parada.value}
@@ -73,7 +79,7 @@ const MapComponent = ({paradas, onSelectOrigen,onSelectDestino, trayecto, transb
             onSelectDestino={onSelectDestino}
           />  
         ))}
-        {/*Metro entero*/}
+        
         {trayecto.length === 0 && ['A', 'B', 'C', 'D', 'E'].map((linea) => {
                 const estaciones = paradas.filter(p => p.linea === linea);
                 if (estaciones.length > 1) {
@@ -83,7 +89,7 @@ const MapComponent = ({paradas, onSelectOrigen,onSelectDestino, trayecto, transb
                 }
                 return null; // Retornar null si no hay estaciones para esa línea
             })}
-        {/*Metro entero*/}
+        
         {trayecto.length === 0 && paradas && transbordos.map((transbordo, index) => {
                 const estaciones = paradas.filter(p => p.value === transbordo.origen || p.value === transbordo.destino);
                 if (estaciones.length > 1) {
@@ -95,7 +101,7 @@ const MapComponent = ({paradas, onSelectOrigen,onSelectDestino, trayecto, transb
             })}
 
 
-        {/*Resultado*/}
+        
         {trayecto.length !== 0 && paradas && trayecto.map((linea, index) => {
           const estaciones = linea.paradas;
           const color = getLineaColorHEX(linea.linea);
@@ -120,6 +126,6 @@ const MapComponent = ({paradas, onSelectOrigen,onSelectDestino, trayecto, transb
           );
         })}
       </MapContainer>
-    )
+      */}
 }
 export default MapComponent;

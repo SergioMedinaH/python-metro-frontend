@@ -2,7 +2,7 @@
 //import dynamic from 'next/dynamic';
 import { Button } from '@/components/ui/button';
 import { Buscador } from '@/components/ui/buscador';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 //const MapComponent = dynamic(() => import('../components/mapcomponent'), { ssr: false });
 
 
@@ -24,6 +24,11 @@ import { ChevronRight, LoaderCircle, X } from 'lucide-react';
 import TrayectoComponente from '@/components/trayecto';
 import { cn } from '@/lib/utils';
 import Image from 'next/image';
+import OpenLayersMap from '@/components/OpenLayersMap';
+
+//import dynamic from 'next/dynamic';
+//import Map from '@/components/Map';
+//const MapComponent = dynamic(() => import('@/components/mapcomponent'), {ssr: false});
 
 export default function Home() {
   /*const isClient = typeof window !== 'undefined';
@@ -44,7 +49,20 @@ export default function Home() {
 
 
   //const isClient = typeof window !== 'undefined';
+  /*const [mapLoaded, setMapLoaded] = useState(false);
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setMapLoaded(true);
+    }, 1000); // Delay the map loading by 1 second
 
+    return () => clearTimeout(timer); // Clear the timer if the component unmounts
+  }, []);
+
+  const MapComponent2 = useMemo(() => dynamic(() => import('../components/MapComponent2'), {
+    ssr: false,
+    loading: () => <p>Loading map...</p>,
+  }), []);*/
+  
 
   const paradas: Parada[] = [
     // Línea A
@@ -273,7 +291,7 @@ const transbordos: Transbordo[] = [
 
   return (
     <div className="flex h-screen w-screen overflow-hidden">
-      <div className="w-[380px] bg-white p-4 overflow-y-auto drop-shadow-md">
+      <div className="w-full bg-white p-4 overflow-y-auto drop-shadow-md sm:w-[380px]">
         <div className='flex flex-col gap-4'>
           <div className='flex gap-4 items-center'>
             <Image className='w-10 h-10 rounded-full' src="https://yt3.googleusercontent.com/ytc/AIdro_kAiJ6bQM7QGSoIQNklbeEYEUBMgLWsZHxBo4K2RTLTrII=s900-c-k-c0x00ffffff-no-rj" width={200} height={200} alt="Icono Metro"/>
@@ -350,6 +368,11 @@ const transbordos: Transbordo[] = [
           }
         </div>
       </div>
+      <OpenLayersMap/>
+      {//mapLoaded && <MapComponent2 />
+      }
+      {//mapLoaded && <MapComponent paradas={paradas} onSelectOrigen={handleSelectParadaOrigen} onSelectDestino={handleSelectParadaDestino} trayecto={trayectosState} transbordos={transbordos}/>
+      }
       {//isClient && 
        //<MapComponent paradas={paradas} onSelectOrigen={handleSelectParadaOrigen} onSelectDestino={handleSelectParadaDestino} trayecto={trayectosState} transbordos={transbordos}/>
        }

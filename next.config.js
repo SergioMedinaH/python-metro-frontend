@@ -1,7 +1,7 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   images: {
-    domains: ['yt3.googleusercontent.com']
+    domains: ['yt3.googleusercontent.com', 'api.maptiler.com']
   },
   rewrites: async () => {
     return [
