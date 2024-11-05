@@ -291,7 +291,7 @@ const transbordos: Transbordo[] = [
 
   return (
     <div className="flex h-screen w-screen overflow-hidden">
-      <div className="w-full bg-white p-4 overflow-y-auto drop-shadow-md sm:w-[380px]">
+      <div className="w-full bg-white p-4 overflow-y-auto drop-shadow-md sm:w-[380px] sm:min-w-[380px]">
         <div className='flex flex-col gap-4'>
           <div className='flex gap-4 items-center'>
             <Image className='w-10 h-10 rounded-full' src="https://yt3.googleusercontent.com/ytc/AIdro_kAiJ6bQM7QGSoIQNklbeEYEUBMgLWsZHxBo4K2RTLTrII=s900-c-k-c0x00ffffff-no-rj" width={200} height={200} alt="Icono Metro"/>
@@ -312,7 +312,7 @@ const transbordos: Transbordo[] = [
             selectedValue={paradaDestino}
           />
           <Button onClick={handleSubmit} disabled={paradaOrigen == "" || paradaDestino == "" || paradaOrigen === paradaDestino}>
-            {loading ? <LoaderCircle className='w-5 h-5 animate-spin'/> : 'Buscar Ruta'}
+            {loading ? <span className='flex gap-2'><LoaderCircle className='w-5 h-5 animate-spin'/> Buscando la mejor ruta...</span> : 'Buscar Ruta'}
           </Button>
           
           {resultado &&
