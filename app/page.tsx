@@ -368,7 +368,7 @@ const transbordos: Transbordo[] = [
           }
         </div>
       </div>
-      <OpenLayersMap/>
+      <OpenLayersMap paradas={paradas} onSelectOrigen={handleSelectParadaOrigen} onSelectDestino={handleSelectParadaDestino} trayecto={trayectosState} transbordos={transbordos}/>
       {//mapLoaded && <MapComponent2 />
       }
       {//mapLoaded && <MapComponent paradas={paradas} onSelectOrigen={handleSelectParadaOrigen} onSelectDestino={handleSelectParadaDestino} trayecto={trayectosState} transbordos={transbordos}/>
