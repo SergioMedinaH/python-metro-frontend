@@ -18,6 +18,8 @@ import { Button } from './ui/button';
 
 interface MarcadorProps {
     paradas: { value: string; label: string, lat: number, lng: number, linea: string }[],
+    paradaOrigen: string,
+    paradaDestino: string,
     onSelectOrigen: (value: string) => void,
     onSelectDestino: (value: string) => void,
     trayecto: Trayecto[],
@@ -40,15 +42,22 @@ interface Transbordo {
   destino: string;
 }
 
-const OpenLayersMap = ({ paradas, onSelectOrigen, onSelectDestino, trayecto, transbordos }: MarcadorProps) => {
+const OpenLayersMap = ({ paradas, paradaOrigen, paradaDestino, onSelectOrigen, onSelectDestino, trayecto, transbordos }: MarcadorProps) => {
     const mapDivRef = useRef<HTMLDivElement>(null);
-    const popupRef = useRef<HTMLDivElement>(null); // Ref para el popup
+    const popupRef = useRef<HTMLDivElement>(null); // Popup general
+    const origenPopupRef = useRef<HTMLDivElement>(null); // Popup para origen
+    const destinoPopupRef = useRef<HTMLDivElement>(null); // Popup para destino
     const [olMap, setOlMap] = useState<Map>();
     const [popupData, setPopupData] = useState<Parada | null>(null);
 
     const center: [number, number] = [-58.391826, -34.608556];
 
+
     useEffect(() => {
+        console.log('paradaOrigen', paradaOrigen);
+        console.log('paradaOrigen', paradaOrigen);
+        console.log('origenPopupRef', origenPopupRef);
+        console.log('destinoPopupRef', destinoPopupRef);
         // Crear el mapa base
         const map = new Map({
             target: mapDivRef.current as HTMLDivElement,
@@ -67,9 +76,48 @@ const OpenLayersMap = ({ paradas, onSelectOrigen, onSelectDestino, trayecto, tra
             })
         });
         
+        // Crear los overlays para origen y destino
+        const origenOverlay = new Overlay({
+            element: origenPopupRef.current!,
+            positioning: 'bottom-center',
+            stopEvent: true,
+            offset: [0, -10]
+        });
+        map.addOverlay(origenOverlay);
 
+        const destinoOverlay = new Overlay({
+            element: destinoPopupRef.current!,
+            positioning: 'bottom-center',
+            stopEvent: true,
+            offset: [0, -10]
+        });
+        map.addOverlay(destinoOverlay);
+
+        // Función para mostrar los popups de origen y destino
+        const showOriginDestinationPopups = () => {
+            // Mostrar el popup de origen
+            const paradaOrigenData = paradas.find(parada => parada.value === paradaOrigen || '');
+            if (paradaOrigenData) {
+                const coordinate = fromLonLat([paradaOrigenData.lng, paradaOrigenData.lat]);
+                origenOverlay.setPosition(coordinate);
+            } else {
+                origenOverlay.setPosition(undefined); // Ocultar popup si no hay origen
+            }
+
+            // Mostrar el popup de destino
+            const paradaDestinoData = paradas.find(parada => parada.value === paradaDestino || '');
+            if (paradaDestinoData) {
+                const coordinate = fromLonLat([paradaDestinoData.lng, paradaDestinoData.lat]);
+                destinoOverlay.setPosition(coordinate);
+            } else {
+                destinoOverlay.setPosition(undefined); // Ocultar popup si no hay destino
+            }
+        };
+
+        // Llamar a la función al cargar el mapa y cada vez que cambien origen/destino
+        showOriginDestinationPopups();
         if (trayecto.length === 0) {
-            // Crear el overlay para el popup
+            // Crear el overlay para el popup general
             const overlay = new Overlay({
                 element: popupRef.current!,
                 positioning: 'bottom-center',
@@ -77,6 +125,9 @@ const OpenLayersMap = ({ paradas, onSelectOrigen, onSelectDestino, trayecto, tra
                 offset: [0, -10]
             });
             map.addOverlay(overlay);
+
+            
+
 
             // Crear capa para las líneas de transbordo
             const transbordoLayer = new VectorLayer({
@@ -165,15 +216,26 @@ const OpenLayersMap = ({ paradas, onSelectOrigen, onSelectDestino, trayecto, tra
     
                 map.forEachFeatureAtPixel(event.pixel, (feature) => {
                     const featureProperties = feature.getProperties();
-    
                     // Verificar que el tipo del feature sea "parada" antes de mostrar el popup
-                    if (featureProperties.type === 'parada') {
+                    if (featureProperties.type === 'parada' && featureProperties.value !== paradaOrigen && featureProperties.value !== paradaDestino) {
                         const clickedParada = featureProperties as Parada;
                         setPopupData(clickedParada); // Guardar la parada en el estado
                         overlay.setPosition(event.coordinate); // Posicionar el popup sobre la parada
                     }
     
                     return true; // Detener la iteración después del primer marcador
+                });
+            });
+            // Cambiar el cursor a pointer al pasar sobre un marcador de tipo "parada"
+            map.on('pointermove', (event) => {
+                map.getTargetElement().style.cursor = ''; // Restablecer el cursor por defecto
+
+                map.forEachFeatureAtPixel(event.pixel, (feature) => {
+                    const featureProperties = feature.getProperties();
+                    if (featureProperties.type === 'parada') {
+                        map.getTargetElement().style.cursor = 'pointer';
+                        return true; // Detener la iteración después de detectar una parada
+                    }
                 });
             });
 
@@ -240,9 +302,9 @@ const OpenLayersMap = ({ paradas, onSelectOrigen, onSelectDestino, trayecto, tra
         setOlMap(map);
 
         return () => map.setTarget(undefined);
-    }, [trayecto]);
+    }, [trayecto, paradaOrigen,paradaDestino]);
 
-    return <div ref={mapDivRef} className='w-full h-full'>
+    return <div ref={mapDivRef} className='sm:w-full h-full w-0'>
     {/* Popup overlay */}
     <div ref={popupRef} className="bg-white shadow-md rounded-xl p-4">
         {popupData && (
@@ -267,7 +329,44 @@ const OpenLayersMap = ({ paradas, onSelectOrigen, onSelectDestino, trayecto, tra
             </div>
         )}
     </div>
+    {/* Popup de origen overlay */}
+    {paradaOrigen !== '' &&
+        <div ref={origenPopupRef} className="bg-white shadow-md rounded-xl p-4 flex flex-col justify-center text-center gap-2">
+            <div className='flex items-center gap-2 font-bold justify-center'>
+                <p>Ir desde</p>
+                        <div  className={cn(
+                          'w-5 h-5 rounded-sm flex text-center items-center justify-center text-white',
+                          paradas.find(p => p.value === paradaOrigen)?.linea === 'A' && 'bg-lineaA',
+                          paradas.find(p => p.value === paradaOrigen)?.linea === 'B' && 'bg-lineaB',
+                          paradas.find(p => p.value === paradaOrigen)?.linea === 'C' && 'bg-lineaC',
+                          paradas.find(p => p.value === paradaOrigen)?.linea === 'D' && 'bg-lineaD',
+                          paradas.find(p => p.value === paradaOrigen)?.linea === 'E' && 'bg-lineaE',
+                          )}>{paradas.find(p => p.value === paradaOrigen)?.linea}</div>
+                    <h4 className=''>{paradas.find(p => p.value === paradaOrigen)?.label}</h4>
+                </div>
+            
+        </div>
+    }
     
+
+    {/* Popup de destino overlay */}
+    {paradaDestino !== '' &&
+    <div ref={destinoPopupRef} className="bg-white shadow-md rounded-xl p-4 flex flex-col justify-center text-center gap-2">
+        <div className='flex items-center gap-2 font-bold justify-center'>
+            <p>Hasta</p>
+            <div  className={cn(
+                'w-5 h-5 rounded-sm flex text-center items-center justify-center text-white',
+                paradas.find(p => p.value === paradaDestino)?.linea === 'A' && 'bg-lineaA',
+                paradas.find(p => p.value === paradaDestino)?.linea === 'B' && 'bg-lineaB',
+                paradas.find(p => p.value === paradaDestino)?.linea === 'C' && 'bg-lineaC',
+                paradas.find(p => p.value === paradaDestino)?.linea === 'D' && 'bg-lineaD',
+                paradas.find(p => p.value === paradaDestino)?.linea === 'E' && 'bg-lineaE',
+                )}>{paradas.find(p => p.value === paradaDestino)?.linea}</div>
+                <h4 className=''>{paradas.find(p => p.value === paradaDestino)?.label}</h4>
+            </div>
+        
+    </div>
+    }
 </div>;
 };
 

@@ -317,9 +317,12 @@ const transbordos: Transbordo[] = [
           
           {resultado &&
           <div className=' flex flex-col gap-4'>
+            {/*
             <Button variant="outline" onClick={LimpiarResultado}>
             <X className='w-4 h-4'/> Limpiar Resultado
             </Button>
+            */}
+            
             <div className='mt-4'>
               <div className='flex gap-4'>
                 <span className='font-bold text-lg'>{resultado.tiempos.reduce((acumulador, tiempo) => acumulador + tiempo, 0)} min{resultado.tiempos.reduce((acumulador, tiempo) => acumulador + tiempo, 0) > 1 && "s"}</span>
@@ -368,7 +371,7 @@ const transbordos: Transbordo[] = [
           }
         </div>
       </div>
-      <OpenLayersMap paradas={paradas} onSelectOrigen={handleSelectParadaOrigen} onSelectDestino={handleSelectParadaDestino} trayecto={trayectosState} transbordos={transbordos}/>
+      <OpenLayersMap paradas={paradas} paradaOrigen={paradaOrigen} paradaDestino={paradaDestino} onSelectOrigen={handleSelectParadaOrigen} onSelectDestino={handleSelectParadaDestino} trayecto={trayectosState} transbordos={transbordos}/>
       {//mapLoaded && <MapComponent2 />
       }
       {//mapLoaded && <MapComponent paradas={paradas} onSelectOrigen={handleSelectParadaOrigen} onSelectDestino={handleSelectParadaDestino} trayecto={trayectosState} transbordos={transbordos}/>
