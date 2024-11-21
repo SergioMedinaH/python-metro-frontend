@@ -39,7 +39,11 @@ export function DatePickerWithPresets() {
       <PopoverContent className="flex w-auto flex-col space-y-2 p-2">
         <p className="text-sm text-center ">Seleccione la fecha de salida</p>
         <div className="rounded-md border mt-2">
-          <Calendar mode="single" selected={date} onSelect={setDate} />
+          <Calendar 
+            mode="single" 
+            selected={date} 
+            onSelect={(day: Date | undefined) => day && setDate(day)} 
+          />
         </div>
       </PopoverContent>
     </Popover>
