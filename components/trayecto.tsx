@@ -1,35 +1,10 @@
-import { cn, getLineaColorBg } from "@/lib/utils";
-
-import Timeline from '@mui/lab/Timeline';
-import TimelineItem, { timelineItemClasses } from '@mui/lab/TimelineItem';
-import TimelineSeparator from '@mui/lab/TimelineSeparator';
-import TimelineConnector from '@mui/lab/TimelineConnector';
-import TimelineContent from '@mui/lab/TimelineContent';
-import TimelineDot from '@mui/lab/TimelineDot';
-import TimelineOppositeContent, {
-  timelineOppositeContentClasses,
-} from '@mui/lab/TimelineOppositeContent';
-
+import { cn } from "@/lib/utils";
 import ItemTrayecto from "./itemtrayecto";
 import { ArrowUpDown, ChevronRight } from "lucide-react";
-
-
-interface Parada {
-    value: string;
-    label: string;
-    lat: number;
-    lng: number;
-    linea: string;
-  }
-
-interface Trayecto {
-    linea: string;
-    paradas: Parada[];
-    tiempos: number[];
-  }
+import { Trayecto } from "@/types/global";
 
 export default function TrayectoComponente({trayecto}: {trayecto: Trayecto}) {
-    const tiempoTotal = trayecto.tiempos.reduce((acumulador, tiempo) => acumulador + tiempo, 0)
+    const tiempoTotal = trayecto.tiempos.reduce((acumulador: number, tiempo: number) => acumulador + tiempo, 0)
 
     if (trayecto.linea === 'Transbordo') {
         return <div key={trayecto.linea + trayecto.paradas[0]} className='flex border-b w-full mt-2 pb-2'>
@@ -90,10 +65,7 @@ export default function TrayectoComponente({trayecto}: {trayecto: Trayecto}) {
                     <p>{trayecto.paradas[1].label}</p>
                     <p className="text-sm text-black/60">{trayecto.tiempos[0]} min{trayecto.tiempos[0] > 1 && "s"}</p>
                     </div>
-                    
                 </div>
-                
-                
             </div>
         </div>
     </div>
@@ -103,32 +75,22 @@ export default function TrayectoComponente({trayecto}: {trayecto: Trayecto}) {
                 <div className="flex flex-col gap-2 p-2 w-full">
                     <div className="flex justify-between gap-2 font-bold text-lg">
                         <span className={cn(
-                  '',
-                  trayecto.linea === 'A' && 'text-lineaA',
-                  trayecto.linea === 'B' && 'text-lineaB',
-                  trayecto.linea === 'C' && 'text-lineaC',
-                  trayecto.linea === 'D' && 'text-lineaD',
-                  trayecto.linea === 'E' && 'text-lineaE',
-                  )}>Línea {trayecto.linea}</span>
-                    {tiempoTotal > 0 && <span className=''>{tiempoTotal} min{tiempoTotal > 1 && "s"}</span>}
-                        
+                            '',
+                            trayecto.linea === 'A' && 'text-lineaA',
+                            trayecto.linea === 'B' && 'text-lineaB',
+                            trayecto.linea === 'C' && 'text-lineaC',
+                            trayecto.linea === 'D' && 'text-lineaD',
+                            trayecto.linea === 'E' && 'text-lineaE',
+                            )}>Línea {trayecto.linea}</span>
+                        {tiempoTotal > 0 && <span className=''>{tiempoTotal} min{tiempoTotal > 1 && "s"}</span>}
                     </div>
                     <div className="flex flex-col">
                         {trayecto.paradas.map((parada, index) => (
                             <ItemTrayecto parada={parada} tiempo={trayecto.tiempos[index-1]} key={index} especial={index === 0 || index === trayecto.paradas.length - 1} ultimo={index === trayecto.paradas.length - 1}/>
                         ))}
                     </div>
-                        
-                    {/*<div className='flex flex-col gap-1'>
-                        {trayecto.paradas.map((parada, index2) => (
-                        <p key={parada.value}>{parada.label} {index2 > 0 && <span>{trayecto.tiempos[index2-1]} min{trayecto.tiempos[index2-1] > 1 && "s"}</span>}</p>
-                        ))}
-                    </div>*/}
                 </div>
-                
             </div>
         )
     }
-
-    
 }

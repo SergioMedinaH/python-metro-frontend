@@ -1,69 +1,26 @@
 "use client";
-//import dynamic from 'next/dynamic';
-import { Button } from '@/components/ui/button';
-import { Buscador } from '@/components/ui/buscador';
-import { useEffect, useMemo, useState } from 'react';
-//const MapComponent = dynamic(() => import('../components/mapcomponent'), { ssr: false });
 
-
-
-//import MapComponent from '@/components/mapcomponent';
-
-
-
-//import dynamic from 'next/dynamic';
-//import Map from '@/components/map'
-//import dynamic from 'next/dynamic';
-
-//const MapComponent = dynamic(() => import('@/components/mapcomponent'), {
-//  ssr: false, // Esto asegura que el componente se renderice solo en el cliente
-//});
-import "leaflet/dist/leaflet.css";
-//import Map from '@/components/MapPrueba'
-import { ChevronRight, LoaderCircle, X } from 'lucide-react';
-import TrayectoComponente from '@/components/trayecto';
+import { useEffect, useState } from 'react';
 import { cn } from '@/lib/utils';
 import Image from 'next/image';
+import { DatePickerWithPresets } from '@/components/datePicker';
+import TimeInput from '@/components/timeInput';
+import TrayectoComponente from '@/components/trayecto';
 import OpenLayersMap from '@/components/OpenLayersMap';
-
-//import dynamic from 'next/dynamic';
-//import Map from '@/components/Map';
-//const MapComponent = dynamic(() => import('@/components/mapcomponent'), {ssr: false});
+import SwitchPrioridad from '@/components/switchPrioridad';
+import { ApiResponse, Parada, Transbordo, Trayecto } from '@/types/global';
+import { Button } from '@/components/ui/button';
+import { Buscador } from '@/components/ui/buscador';
+import { Switch } from '@/components/ui/switch';
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion"
+import { Accessibility, ChevronRight, LoaderCircle, X } from 'lucide-react';
 
 export default function Home() {
-  /*const isClient = typeof window !== 'undefined';
-  const [mapLoaded, setMapLoaded] = useState(false);
-
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setMapLoaded(true);
-    }, 1000); // Retrasar la carga del mapa por 1 segundo
-
-    return () => clearTimeout(timer); // Limpiar el temporizador en caso de que el componente se desmonte
-  }, []);
-*/
-  //const MapComponent = dynamic(() => import('../components/mapcomponent'), {
-  //  ssr: false, // Esto asegura que el componente se renderice solo en el cliente
-  //});
-
-
-
-  //const isClient = typeof window !== 'undefined';
-  /*const [mapLoaded, setMapLoaded] = useState(false);
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setMapLoaded(true);
-    }, 1000); // Delay the map loading by 1 second
-
-    return () => clearTimeout(timer); // Clear the timer if the component unmounts
-  }, []);
-
-  const MapComponent2 = useMemo(() => dynamic(() => import('../components/MapComponent2'), {
-    ssr: false,
-    loading: () => <p>Loading map...</p>,
-  }), []);*/
-  
-
   const paradas: Parada[] = [
     // Línea A
     { value: "alberti", label: "Alberti", lat: -34.6098887, lng: -58.4008674, linea: "A" },
@@ -111,77 +68,43 @@ export default function Home() {
     { value: "correocentral", label: "Correo Central", lat: -34.6031305, lng: -58.3729475, linea: "E" },
     { value: "catalinas", label: "Catalinas", lat: -34.5965586, lng: -58.3745719, linea: "E" },
     { value: "retiroe", label: "Retiro", lat: -34.5916364, lng: -58.3748868, linea: "E" }
-];
-const transbordos: Transbordo[] = [
-  {origen: "independencia", destino: "independenciae"},
-  {origen: "peru", destino: "bolivar"},
-  {origen: "peru", destino: "catedral"},
-  {origen: "lima", destino: "avdemayo"},
-  {origen: "diagonal", destino: "9dejulio"},
-  {origen: "9dejulio", destino: "carlospellegrini"},
-  {origen: "retiroc", destino: "retiroe"},
-  
-];
+  ];
+  const transbordos: Transbordo[] = [
+    {origen: "independencia", destino: "independenciae"},
+    {origen: "peru", destino: "bolivar"},
+    {origen: "peru", destino: "catedral"},
+    {origen: "lima", destino: "avdemayo"},
+    {origen: "diagonal", destino: "9dejulio"},
+    {origen: "9dejulio", destino: "carlospellegrini"},
+    {origen: "retiroc", destino: "retiroe"},
+  ];
 
-
-  interface Parada {
-    value: string;
-    label: string;
-    lat: number;
-    lng: number;
-    linea: string;
-  }
-  interface Transbordo {
-    origen: string;
-    destino: string;
-  }
-
-  function getParada(paradaBuscar: string): Parada | undefined {
-    return paradas.find((parada) => parada.value === paradaBuscar);
-  }
   // Función para obtener la lista de paradas a partir de una lista de valores, conservando el orden original
   function getOrderedParadas(values: string[]): Parada[] {
     return values.map(value => paradas.find(parada => parada.value === value)!).filter(parada => parada !== undefined);
   }
 
-  
+  // variable del valor de la parada de origen
   const [paradaOrigen, setParadaOrigen] = useState('')
+  // función para cambiar la parada de origen
   const handleSelectParadaOrigen = (value: string) => {
-    setParadaOrigen(value)
+    if (paradaOrigen !== value) setParadaOrigen(value);
+    
   }
+  // variable del valor de la parada de destino
   const [paradaDestino, setParadaDestino] = useState('')
+  // función para cambiar la parada de destino
   const handleSelectParadaDestino = (value: string) => {
-    setParadaDestino(value)
+    if (paradaDestino !== value) setParadaDestino(value);
   }
 
-  interface ApiResponse {
-    ruta: string[];
-    tiempos: number[];
-  }
+  // variable que almacena la ruta devuelta por la API
   const [resultado, setResultado] = useState<ApiResponse>();
+  // variable que almacena si se está buscando la ruta
   const [loading, setLoading] = useState(false);
-  /*
-  const handleSubmit = async () => {
-    setLoading(true);
-    try {
-      const response = await fetch(`/api/index`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ paradaOrigen: paradaOrigen,  paradaDestino: paradaDestino }),
-      });
-
-      const data: ApiResponse = await response.json();
-      setResultado(data);
-    } catch (error) {
-      console.error("Error fetching route:", error);
-    } finally {
-      setLoading(false); // Desactivar estado de carga
-    }
-  };*/
-
-  const handleSubmit = async () => {
+  
+  // función que calcula la ruta (llama a la API)
+  const CalcularRuta = async () => {
     setLoading(true);
     try {
       // Construir la URL con los parámetros de la solicitud GET
@@ -207,24 +130,12 @@ const transbordos: Transbordo[] = [
     }
   };
 
-  const LimpiarResultado = () => {
-    setParadaOrigen('');
-    setParadaDestino('');
-  }
-
-  
-
-  interface Trayecto {
-    linea: string;
-    paradas: Parada[];
-    tiempos: number[];
-  }
   let paradasRuta: Parada[] = [];
   let trayectos: Trayecto[] = [];
 
   const [trayectosState, setTrayectosState] = useState<Trayecto[]>([]);
 
-
+  // función que obtiene los trayectos si se actualiza el resultado
   useEffect(() => {
     setTrayectosState([]);
     if (resultado) {
@@ -249,27 +160,6 @@ const transbordos: Transbordo[] = [
           }
         });
         trayectos.push(trayectoActual);
-        
-        
-        /*let paradaActual = paradasRuta[0];
-
-        paradasRuta.forEach((parada, index) => {
-          console.log(`paradaActual: ${paradaActual.value}, parada: ${parada.value}, index: ${index}`);
-          if (parada.linea !== paradaActual.linea) {
-            // @ts-ignore
-            trayectos.push({ linea: paradaActual.linea, paradas: paradasRuta.slice(trayectos.flatMap(t => t.paradas).length, index)  });
-
-            //transbordo
-            //trayectos.push({linea: "Transbordo", paradas: [paradasRuta[index - 1], parada]});
-            console.log(`corte de ${paradaActual.linea} a ${parada.linea}`);
-            paradaActual = parada;
-          }// @ts-ignore
-          if (index === paradasRuta.length - 1) {
-            // @ts-ignore
-            trayectos.push({ linea: paradaActual.linea, paradas: paradasRuta.slice(trayectos.flatMap(t => t.paradas).length) });
-          }
-        });*/
-
       }
     } else {
       paradasRuta = [];
@@ -278,6 +168,7 @@ const transbordos: Transbordo[] = [
     setTrayectosState(trayectos);
   }, [resultado]);
 
+  // función que limpia la ruta,trayectos y resultado si se actualiza la parada de origen o destino
   useEffect(() => {
     paradasRuta = [];
     trayectos = [];
@@ -285,19 +176,16 @@ const transbordos: Transbordo[] = [
     setResultado(undefined);
   }, [paradaOrigen, paradaDestino]);
 
-  
-
-  
-
+  // código de la interfaz
   return (
     <div className="flex h-screen w-screen overflow-hidden">
+      {/* Panel de la izquierda */}
       <div className="w-full bg-white p-4 overflow-y-auto drop-shadow-md sm:w-[380px] sm:min-w-[380px]">
         <div className='flex flex-col gap-4'>
           <div className='flex gap-4 items-center'>
             <Image className='w-10 h-10 rounded-full' src="https://yt3.googleusercontent.com/ytc/AIdro_kAiJ6bQM7QGSoIQNklbeEYEUBMgLWsZHxBo4K2RTLTrII=s900-c-k-c0x00ffffff-no-rj" width={200} height={200} alt="Icono Metro"/>
             <h1 className='text-xl my-3'>Subte Buenos Aires</h1>               
           </div>
-          
           <h2 className=''>Seleccione su ruta aquí o en el mapa:</h2>
           <Buscador 
             paradas={paradas} 
@@ -311,18 +199,27 @@ const transbordos: Transbordo[] = [
             onSelect={handleSelectParadaDestino}
             selectedValue={paradaDestino}
           />
-          <Button onClick={handleSubmit} disabled={paradaOrigen == "" || paradaDestino == "" || paradaOrigen === paradaDestino}>
+          <Accordion type="single" collapsible>
+            <AccordionItem value="item-1">
+              <AccordionTrigger className='text-sm'>Más opciones</AccordionTrigger>
+              <AccordionContent className='flex flex-col gap-4 mt-2'>
+                <TimeInput/>
+                <DatePickerWithPresets/>
+                
+                <div className='flex gap-2 items-center'>
+                  <Switch/>
+                  <p className='text-sm flex items-center gap-1'> <Accessibility className='w-5 h-5 bg-blue-500 rounded-sm p-0.5 text-white' /> Solo paradas accesibles </p>
+                </div>
+                <SwitchPrioridad/>
+              </AccordionContent>
+            </AccordionItem>
+          </Accordion>
+          <Button onClick={CalcularRuta} disabled={paradaOrigen == "" || paradaDestino == "" || paradaOrigen === paradaDestino}>
             {loading ? <span className='flex gap-2'><LoaderCircle className='w-5 h-5 animate-spin'/> Buscando la mejor ruta...</span> : 'Buscar Ruta'}
           </Button>
-          
+          {/* Resultado de la ruta */}
           {resultado &&
           <div className=' flex flex-col gap-4'>
-            {/*
-            <Button variant="outline" onClick={LimpiarResultado}>
-            <X className='w-4 h-4'/> Limpiar Resultado
-            </Button>
-            */}
-            
             <div className='mt-4'>
               <div className='flex gap-4'>
                 <span className='font-bold text-lg'>{resultado.tiempos.reduce((acumulador, tiempo) => acumulador + tiempo, 0)} min{resultado.tiempos.reduce((acumulador, tiempo) => acumulador + tiempo, 0) > 1 && "s"}</span>
@@ -345,23 +242,16 @@ const transbordos: Transbordo[] = [
                           trayecto.linea === 'E' && 'bg-lineaE',
                           )}>{trayecto.linea}</div>
                         </div>
-                        
-                        
                       )
                     }
-                  }
-                    
-                  )}
+                  })}
                 </div>
-                
               </div>
               <div className='flex gap-1'>
                 <p className='text-sm'>{resultado.ruta.length} parada{resultado.ruta.length > 1 && "s"}.</p>
                 <p className='text-sm'>{trayectosState.filter(trayecto => trayecto.linea === "Transbordo").length} transbordo{trayectosState.filter(trayecto => trayecto.linea === "Transbordo").length > 1 && "s"}.</p>
-                
               </div>
             </div>
-            
             <div className='flex flex-col border-t'>
               {trayectosState.map((trayecto, index) => (
                 <TrayectoComponente trayecto={trayecto} key={index}/>
@@ -371,22 +261,10 @@ const transbordos: Transbordo[] = [
           }
         </div>
       </div>
+      {/* Mapa de la derecha */}
       <OpenLayersMap paradas={paradas} paradaOrigen={paradaOrigen} paradaDestino={paradaDestino} onSelectOrigen={handleSelectParadaOrigen} onSelectDestino={handleSelectParadaDestino} trayecto={trayectosState} transbordos={transbordos}/>
-      {//mapLoaded && <MapComponent2 />
-      }
-      {//mapLoaded && <MapComponent paradas={paradas} onSelectOrigen={handleSelectParadaOrigen} onSelectDestino={handleSelectParadaDestino} trayecto={trayectosState} transbordos={transbordos}/>
-      }
-      {//isClient && 
-       //<MapComponent paradas={paradas} onSelectOrigen={handleSelectParadaOrigen} onSelectDestino={handleSelectParadaDestino} trayecto={trayectosState} transbordos={transbordos}/>
-       }
-      
-      {//<Map/>
-      }
-      {//<MapComponent paradas={paradas}/>
-      } 
-      
-      
-    </div>
+        
+      </div>
     
   )
 }

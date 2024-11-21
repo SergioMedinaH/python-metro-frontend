@@ -78,7 +78,7 @@ export function Buscador({
           <CommandList>
             <CommandEmpty>No se encuentra la parada.</CommandEmpty>
             <CommandGroup>
-              {paradas.map((parada) => (
+              {paradas.filter(parada => parada.value !== value).map((parada) => (
                 <CommandItem
                   key={parada.value}
                   value={parada.value}

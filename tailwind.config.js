@@ -58,11 +58,33 @@ module.exports = {
   				'4': 'hsl(var(--chart-4))',
   				'5': 'hsl(var(--chart-5))'
   			},
-			lineaA: '#00aedb',  // Color de la línea A
-			lineaB: '#ee1b2e',  // Color de la línea B
-			lineaC: '#0168b3',  // Color de la línea C
-			lineaD: '#008067',  // Color de la línea D
-			lineaE: '#6d2281',  // Color de la línea E
+  			lineaA: '#00aedb',
+  			lineaB: '#ee1b2e',
+  			lineaC: '#0168b3',
+  			lineaD: '#008067',
+  			lineaE: '#6d2281'
+  		},
+  		keyframes: {
+  			'accordion-down': {
+  				from: {
+  					height: '0'
+  				},
+  				to: {
+  					height: 'var(--radix-accordion-content-height)'
+  				}
+  			},
+  			'accordion-up': {
+  				from: {
+  					height: 'var(--radix-accordion-content-height)'
+  				},
+  				to: {
+  					height: '0'
+  				}
+  			}
+  		},
+  		animation: {
+  			'accordion-down': 'accordion-down 0.2s ease-out',
+  			'accordion-up': 'accordion-up 0.2s ease-out'
   		}
   	}
   },

@@ -15,36 +15,12 @@ import Fill from 'ol/style/Fill';
 import Stroke from 'ol/style/Stroke';
 import { cn, getLineaColorHEX } from '@/lib/utils';
 import { Button } from './ui/button';
+import { MarcadorProps, Parada } from '@/types/global';
 
-interface MarcadorProps {
-    paradas: { value: string; label: string, lat: number, lng: number, linea: string }[],
-    paradaOrigen: string,
-    paradaDestino: string,
-    onSelectOrigen: (value: string) => void,
-    onSelectDestino: (value: string) => void,
-    trayecto: Trayecto[],
-    transbordos: Transbordo[]
-}
-interface Parada {
-  value: string;
-  label: string;
-  lat: number;
-  lng: number;
-  linea: string;
-}
-interface Trayecto {
-  linea: string;
-  paradas: Parada[];
-  tiempos: number[];
-}
-interface Transbordo {
-  origen: string;
-  destino: string;
-}
 
 const OpenLayersMap = ({ paradas, paradaOrigen, paradaDestino, onSelectOrigen, onSelectDestino, trayecto, transbordos }: MarcadorProps) => {
     const mapDivRef = useRef<HTMLDivElement>(null);
-    const popupRef = useRef<HTMLDivElement>(null); // Popup general
+    const popupRef = useRef<HTMLDivElement>(null); // Popup general (que aparece al pulsar la parada)
     const origenPopupRef = useRef<HTMLDivElement>(null); // Popup para origen
     const destinoPopupRef = useRef<HTMLDivElement>(null); // Popup para destino
     const [olMap, setOlMap] = useState<Map>();
@@ -52,12 +28,10 @@ const OpenLayersMap = ({ paradas, paradaOrigen, paradaDestino, onSelectOrigen, o
 
     const center: [number, number] = [-58.391826, -34.608556];
 
-
+    
+    
+    // TODO : Poner la carga del mapa fuera del useEffect &&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
     useEffect(() => {
-        console.log('paradaOrigen', paradaOrigen);
-        console.log('paradaOrigen', paradaOrigen);
-        console.log('origenPopupRef', origenPopupRef);
-        console.log('destinoPopupRef', destinoPopupRef);
         // Crear el mapa base
         const map = new Map({
             target: mapDivRef.current as HTMLDivElement,
@@ -125,10 +99,6 @@ const OpenLayersMap = ({ paradas, paradaOrigen, paradaDestino, onSelectOrigen, o
                 offset: [0, -10]
             });
             map.addOverlay(overlay);
-
-            
-
-
             // Crear capa para las líneas de transbordo
             const transbordoLayer = new VectorLayer({
                 source: new VectorSource({
@@ -152,7 +122,6 @@ const OpenLayersMap = ({ paradas, paradaOrigen, paradaDestino, onSelectOrigen, o
                                     lineDash: [5, 10], // Línea discontinua
                                 })
                             }));
-
                             return lineFeature;
                         }
                         return null;
@@ -179,7 +148,6 @@ const OpenLayersMap = ({ paradas, paradaOrigen, paradaDestino, onSelectOrigen, o
                                     width: 5,
                                 })
                             }));
-
                             return lineFeature;
                         }
                         return [];
@@ -203,7 +171,6 @@ const OpenLayersMap = ({ paradas, paradaOrigen, paradaDestino, onSelectOrigen, o
                                 fill: new Fill({ color }),
                             })
                         }));
-    
                         return feature;
                     }),
                 })
@@ -222,21 +189,49 @@ const OpenLayersMap = ({ paradas, paradaOrigen, paradaDestino, onSelectOrigen, o
                         setPopupData(clickedParada); // Guardar la parada en el estado
                         overlay.setPosition(event.coordinate); // Posicionar el popup sobre la parada
                     }
-    
                     return true; // Detener la iteración después del primer marcador
                 });
             });
+            let currentFeature: Feature | null = null;
             // Cambiar el cursor a pointer al pasar sobre un marcador de tipo "parada"
             map.on('pointermove', (event) => {
+                
                 map.getTargetElement().style.cursor = ''; // Restablecer el cursor por defecto
-
+                
                 map.forEachFeatureAtPixel(event.pixel, (feature) => {
                     const featureProperties = feature.getProperties();
                     if (featureProperties.type === 'parada') {
-                        map.getTargetElement().style.cursor = 'pointer';
+                        currentFeature = feature as Feature;
+                        map.getTargetElement().style.cursor = 'pointer'; // Cambiar el cursor a pointer
+                        const originalStyle = (currentFeature).getStyle();
+                        if (originalStyle && originalStyle instanceof Style) {
+                            // Cambiar el tamaño del marcador
+                            const newStyle = new Style({
+                                image: new Circle({
+                                    radius: 8,
+                                    fill: (originalStyle.getImage() as Circle).getFill() || new Fill({ color: 'gray' })
+                                })
+                            });
+                            (feature as Feature).setStyle(newStyle);
+                        }
                         return true; // Detener la iteración después de detectar una parada
                     }
                 });
+                if(!map.hasFeatureAtPixel(event.pixel)) {
+                    if(currentFeature) {
+                        const originalStyle = (currentFeature as Feature).getStyle() as Style | null;
+                        if (originalStyle && originalStyle instanceof Style) {
+                            // Restaurar el tamaño original
+                            const resetStyle = new Style({
+                                image: new Circle({
+                                    radius: 5,
+                                    fill: (originalStyle.getImage() as Circle).getFill() || new Fill({ color: 'gray' })
+                                })
+                            });
+                            (currentFeature as Feature).setStyle(resetStyle);
+                        }
+                    }
+                }
             });
 
             // Cerrar el popup al hacer clic fuera
@@ -246,7 +241,6 @@ const OpenLayersMap = ({ paradas, paradaOrigen, paradaDestino, onSelectOrigen, o
                     setPopupData(null);
                 }
             });
-
         } else {
             console.log(trayecto);
             // Capa para los trayectos cuando trayecto.length !== 0
@@ -268,10 +262,8 @@ const OpenLayersMap = ({ paradas, paradaOrigen, paradaDestino, onSelectOrigen, o
                                     fill: new Fill({ color }),
                                 })
                             }));
-
                             return feature;
                         });
-
                         // Crear la línea de trayecto
                         if (estaciones.length > 1) {
                             const lineCoords = estaciones.map(est => fromLonLat([est.lng, est.lat]));
@@ -288,7 +280,6 @@ const OpenLayersMap = ({ paradas, paradaOrigen, paradaDestino, onSelectOrigen, o
                                     lineDash: dashArray
                                 })
                             }));
-
                             return [lineFeature, ...markerFeatures];
                         }
                         return markerFeatures;
@@ -304,6 +295,7 @@ const OpenLayersMap = ({ paradas, paradaOrigen, paradaDestino, onSelectOrigen, o
         return () => map.setTarget(undefined);
     }, [trayecto, paradaOrigen,paradaDestino]);
 
+    {/* Interfaz del mapa */}
     return <div ref={mapDivRef} className='sm:w-full h-full w-0'>
     {/* Popup overlay */}
     <div ref={popupRef} className="bg-white shadow-md rounded-xl p-4">
@@ -320,12 +312,10 @@ const OpenLayersMap = ({ paradas, paradaOrigen, paradaDestino, onSelectOrigen, o
                           )}>{popupData.linea}</div>
                     <h4 className=''>{popupData.label}</h4>
                 </div>
-                
                 <div className='flex flex-col gap-4'>
                     <Button onClick={() => onSelectOrigen(popupData.value)}>Seleccionar como Origen</Button>
                     <Button onClick={() => onSelectDestino(popupData.value)}>Seleccionar como Destino</Button>
                 </div>
-                
             </div>
         )}
     </div>
@@ -334,21 +324,20 @@ const OpenLayersMap = ({ paradas, paradaOrigen, paradaDestino, onSelectOrigen, o
         <div ref={origenPopupRef} className="bg-white shadow-md rounded-xl p-4 flex flex-col justify-center text-center gap-2">
             <div className='flex items-center gap-2 font-bold justify-center'>
                 <p>Ir desde</p>
-                        <div  className={cn(
-                          'w-5 h-5 rounded-sm flex text-center items-center justify-center text-white',
-                          paradas.find(p => p.value === paradaOrigen)?.linea === 'A' && 'bg-lineaA',
-                          paradas.find(p => p.value === paradaOrigen)?.linea === 'B' && 'bg-lineaB',
-                          paradas.find(p => p.value === paradaOrigen)?.linea === 'C' && 'bg-lineaC',
-                          paradas.find(p => p.value === paradaOrigen)?.linea === 'D' && 'bg-lineaD',
-                          paradas.find(p => p.value === paradaOrigen)?.linea === 'E' && 'bg-lineaE',
-                          )}>{paradas.find(p => p.value === paradaOrigen)?.linea}</div>
-                    <h4 className=''>{paradas.find(p => p.value === paradaOrigen)?.label}</h4>
-                </div>
+                <div  className={cn(
+                    'w-5 h-5 rounded-sm flex text-center items-center justify-center text-white',
+                    paradas.find(p => p.value === paradaOrigen)?.linea === 'A' && 'bg-lineaA',
+                    paradas.find(p => p.value === paradaOrigen)?.linea === 'B' && 'bg-lineaB',
+                    paradas.find(p => p.value === paradaOrigen)?.linea === 'C' && 'bg-lineaC',
+                    paradas.find(p => p.value === paradaOrigen)?.linea === 'D' && 'bg-lineaD',
+                    paradas.find(p => p.value === paradaOrigen)?.linea === 'E' && 'bg-lineaE',
+                    )}>{paradas.find(p => p.value === paradaOrigen)?.linea}</div>
+                <h4 className=''>{paradas.find(p => p.value === paradaOrigen)?.label}</h4>
+            </div>
             
         </div>
     }
     
-
     {/* Popup de destino overlay */}
     {paradaDestino !== '' &&
     <div ref={destinoPopupRef} className="bg-white shadow-md rounded-xl p-4 flex flex-col justify-center text-center gap-2">
@@ -362,9 +351,8 @@ const OpenLayersMap = ({ paradas, paradaOrigen, paradaDestino, onSelectOrigen, o
                 paradas.find(p => p.value === paradaDestino)?.linea === 'D' && 'bg-lineaD',
                 paradas.find(p => p.value === paradaDestino)?.linea === 'E' && 'bg-lineaE',
                 )}>{paradas.find(p => p.value === paradaDestino)?.linea}</div>
-                <h4 className=''>{paradas.find(p => p.value === paradaDestino)?.label}</h4>
-            </div>
-        
+            <h4 className=''>{paradas.find(p => p.value === paradaDestino)?.label}</h4>
+        </div>
     </div>
     }
 </div>;

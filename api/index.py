@@ -4,7 +4,8 @@ import matplotlib.pyplot as plt
 import math
 import json
 
-
+######################## IGNORAR CÓDIGO #########################################
+# Este código no se utiliza
 paradas = [
     # Línea A
     { "value": "alberti", "label": "Alberti", "lat": -34.6098887, "lng": -58.4008674, "linea": "A" },
