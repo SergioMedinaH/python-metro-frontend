@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from 'react';
+
 import { cn } from '@/lib/utils';
 import Image from 'next/image';
 import { DatePickerWithPresets } from '@/components/datePicker';
@@ -19,56 +20,34 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion"
 import { Accessibility, ChevronRight, LoaderCircle, X } from 'lucide-react';
+import Papa from 'papaparse';
 
 export default function Home() {
-  const paradas: Parada[] = [
-    // Línea A
-    { value: "alberti", label: "Alberti", lat: -34.6098887, lng: -58.4008674, linea: "A" },
-    { value: "pasco", label: "Pasco", lat: -34.6095527, lng: -58.3983828, linea: "A" },
-    { value: "congreso", label: "Congreso", lat: -34.6092415, lng: -58.3926706, linea: "A" },
-    { value: "saenzpena", label: "Sáenz Peña", lat: -34.6094200, lng: -58.3866700, linea: "A" },
-    { value: "lima", label: "Lima", lat: -34.6091054, lng: -58.3825208, linea: "A" },
-    { value: "piedras", label: "Piedras", lat: -34.6092446, lng: -58.3784204, linea: "A" },
-    { value: "peru", label: "Perú", lat: -34.6085633, lng: -58.3744662, linea: "A" },
-    { value: "plzmayo", label: "Plaza de Mayo Casa Rosada", lat: -34.6086997, lng: -58.3714911, linea: "A" },
+  const [paradas, setParadas] = useState<Parada[]>([]); // Estado tipado para las paradas
 
-    // Línea B
-    { value: "pasteur", label: "Pasteur AMIA", lat: -34.6054673, lng: -58.4031439, linea: "B" },
-    { value: "callaomaestro", label: "Callao Maestro A. Bravo", lat: -34.6045542, lng: -58.3931682, linea: "B" },
-    { value: "uruguay", label: "Uruguay", lat: -34.6051435, lng: -58.3889597, linea: "B" },
-    { value: "carlospellegrini", label: "Carlos Pellegrini", lat: -34.6034877, lng: -58.3807319, linea: "B" },
-    { value: "florida", label: "Florida", lat: -34.6033000, lng: -58.3745300, linea: "B" },
-    { value: "leandro", label: "Leandro N. Alem", lat: -34.6030011, lng: -58.3706754, linea: "B" },
+  useEffect(() => {
+    const cargarCSV = async () => {
+      try {
+        // Acceder al archivo CSV en la carpeta public
+        const response = await fetch('/paradas.csv'); // Ruta relativa desde la raíz del proyecto
+        const csvData = await response.text(); // Obtén el texto del CSV
 
-    // Línea C
-    { value: "constitucion", label: "Constitución", lat: -34.6275021, lng: -58.3824531, linea: "C" },
-    { value: "sanjuan", label: "San Juan", lat: -34.6242829, lng: -58.3874077, linea: "C" },
-    { value: "independencia", label: "Independencia", lat: -34.6200717, lng: -58.3837130, linea: "C" },
-    { value: "moreno", label: "Moreno", lat: -34.6103445, lng: -58.3828383, linea: "C" },
-    { value: "avdemayo", label: "Avenida de Mayo", lat: -34.60899098, lng: -58.38068279, linea: "C" },
-    { value: "diagonal", label: "Diagonal Norte", lat: -34.6048383, lng: -58.3794651, linea: "C" },
-    { value: "lavalle", label: "Lavalle", lat: -34.6020564, lng: -58.3781247, linea: "C" },
-    { value: "sanmartin", label: "General San Martín", lat: -34.6008090, lng: -58.3848683, linea: "C" },
-    { value: "retiroc", label: "Retiro", lat: -34.5916364, lng: -58.3748868, linea: "C" },
+        // Parsear el CSV usando papaparse
+        Papa.parse<Parada>(csvData, {
+          header: true, // Si el CSV tiene encabezados
+          skipEmptyLines: true, // Ignorar líneas vacías
+          complete: (result) => {
+            setParadas(result.data); // Guardar los datos en el estado
+          },
+        });
+      } catch (error) {
+        console.error('Error al cargar el CSV:', error);
+      }
+    };
 
-    // Línea D
-    { value: "facultadmedicina", label: "Facultad de Medicina", lat: -34.5997270, lng: -58.3972006, linea: "D" },
-    { value: "callao", label: "Callao", lat: -34.5996286, lng: -58.3925590, linea: "D" },
-    { value: "tribunales", label: "Tribunales Teatro Colon", lat: -34.6015524, lng: -58.3850202, linea: "D" },
-    { value: "9dejulio", label: "9 de Julio", lat: -34.6044707, lng: -58.3801163, linea: "D" },
-    { value: "catedral", label: "Catedral", lat: -34.6076198, lng: -58.3742565, linea: "D" },
-
-    // Línea E
-    { value: "pichincha", label: "Pichincha", lat: -34.6232753, lng: -58.3995216, linea: "E" },
-    { value: "entrerios-rodolfowalsh", label: "Entre Ríos - Rodolfo Walsh", lat: -34.6229760, lng: -58.3938755, linea: "E" },
-    { value: "sanjose", label: "San José", lat: -34.6222576, lng: -58.3877218, linea: "E" },
-    { value: "independenciae", label: "Independencia", lat: -34.6180704, lng: -58.3834729, linea: "E" },
-    { value: "belgrano", label: "Belgrano", lat: -34.6124483, lng: -58.3810317, linea: "E" },
-    { value: "bolivar", label: "Bolívar", lat: -34.6094245, lng: -58.3762727, linea: "E" },
-    { value: "correocentral", label: "Correo Central", lat: -34.6031305, lng: -58.3729475, linea: "E" },
-    { value: "catalinas", label: "Catalinas", lat: -34.5965586, lng: -58.3745719, linea: "E" },
-    { value: "retiroe", label: "Retiro", lat: -34.5916364, lng: -58.3748868, linea: "E" }
-  ];
+    cargarCSV();
+  }, []);
+  
   const transbordos: Transbordo[] = [
     {origen: "independencia", destino: "independenciae"},
     {origen: "peru", destino: "bolivar"},
@@ -262,8 +241,12 @@ export default function Home() {
         </div>
       </div>
       {/* Mapa de la derecha */}
+      {paradas.length > 0 ?
       <OpenLayersMap paradas={paradas} paradaOrigen={paradaOrigen} paradaDestino={paradaDestino} onSelectOrigen={handleSelectParadaOrigen} onSelectDestino={handleSelectParadaDestino} trayecto={trayectosState} transbordos={transbordos}/>
-        
+      : <div className='flex items-center justify-center w-full h-full'>
+          <p className='text-sm flex gap-2 items-center'><LoaderCircle className='w-5 h-5 animate-spin'/> Cargando mapa... </p>
+        </div>
+      }
       </div>
     
   )
