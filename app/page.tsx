@@ -184,11 +184,13 @@ export default function Home() {
               <AccordionContent className='flex flex-col gap-4 mt-2'>
                 <TimeInput/>
                 <DatePickerWithPresets/>
-                
-                <div className='flex gap-2 items-center'>
+                {/**
+                 <div className='flex gap-2 items-center'>
                   <Switch/>
                   <p className='text-sm flex items-center gap-1'> <Accessibility className='w-5 h-5 bg-blue-500 rounded-sm p-0.5 text-white' /> Solo paradas accesibles </p>
                 </div>
+                 */}
+                
                 <SwitchPrioridad/>
               </AccordionContent>
             </AccordionItem>

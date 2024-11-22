@@ -20,6 +20,7 @@ export function DatePickerWithPresets() {
 
   const handlePresetClick = (daysToAdd: number) => {
     setDate(addDays(new Date(), daysToAdd))
+    
   }
 
   return (
@@ -42,7 +43,9 @@ export function DatePickerWithPresets() {
           <Calendar 
             mode="single" 
             selected={date} 
-            onSelect={(day: Date | undefined) => day && setDate(day)} 
+            onSelect={(day: Date | undefined) => 
+              day && setDate(day)
+            } 
           />
         </div>
       </PopoverContent>
