@@ -1,4 +1,4 @@
-import time
+'''import time
 import networkx as nx
 import matplotlib.pyplot as plt
 import math
@@ -179,3 +179,4 @@ def handler(request):
             "body": json.dumps({"error": "Método no permitido"}),
             "headers": {"Content-Type": "application/json"}
         }
+        '''
