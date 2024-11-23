@@ -5,11 +5,8 @@ import { Clock } from "lucide-react";
 import { DateInput, DateSegment, TimeField } from "react-aria-components";
 import { Time } from '@internationalized/date';
 
-export default function TimeInput() {
-  const [time, setTime] = React.useState(new Time(
-    new Date().getHours(),
-    new Date().getMinutes()
-  ));
+export default function TimeInput({time, setTime}: {time: Time, setTime: (time: Time) => void}) {
+  
 
   return (
     <TimeField 

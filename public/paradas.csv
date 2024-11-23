@@ -1,38 +1,38 @@
-value,label,lat,lng,linea
-alberti,Alberti,-34.6098887,-58.4008674,A
-pasco,Pasco,-34.6095527,-58.3983828,A
-congreso,Congreso,-34.6092415,-58.3926706,A
-saenzpena,Sáenz Peña,-34.60942,-58.38667,A
-lima,Lima,-34.6091054,-58.3825208,A
-piedras,Piedras,-34.608837932068,-58.378502407734,A
-peru,Perú,-34.6085633,-58.3744662,A
-plzmayo,Plaza de Mayo Casa Rosada,-34.6086997,-58.3714911,A
-pasteur,Pasteur AMIA,-34.604623105662,-58.399357348627,B
-callaomaestro,Callao Maestro A. Bravo,-34.6045542,-58.3931682,B
-uruguay,Uruguay,-34.604046341872,-58.39284561581,B
-carlospellegrini,Carlos Pellegrini,-34.6034877,-58.3807319,B
-florida,Florida,-34.6033,-58.37453,B
-leandro,Leandro N. Alem,-34.6030011,-58.3706754,B
-constitucion,Constitución,-34.6275021,-58.3824531,C
-sanjuan,San Juan,-34.6226762706,-58.379951566484,C
-independencia,Independencia,-34.6200717,-58.383713,C
-moreno,Moreno,-34.612434686061,-58.380517847867,C
-avdemayo,Avenida de Mayo,-34.60899098,-58.38068279,C
-diagonal,Diagonal Norte,-34.6048383,-58.3794651,C
-lavalle,Lavalle,-34.594872221186,-58.378115594396,C
-sanmartin,General San Martín,-34.600809,-58.3848683,C
-retiroc,Retiro,-34.5916364,-58.3748868,C
-facultadmedicina,Facultad de Medicina,-34.599727,-58.3972006,D
-callao,Callao,-34.5996286,-58.392559,D
-tribunales,Tribunales Teatro Colon,-34.6015524,-58.3850202,D
-9dejulio,9 de Julio,-34.6044707,-58.3801163,D
-catedral,Catedral,-34.6076198,-58.3742565,D
-pichincha,Pichincha,-34.6232753,-58.3995216,E
-entrerios-rodolfowalsh,Entre Ríos - Rodolfo Walsh,-34.622976,-58.3938755,E
-sanjose,San José,-34.6222576,-58.3877218,E
-independenciae,Independencia,-34.6180704,-58.3834729,E
-belgrano,Belgrano,-34.6124483,-58.3810317,E
-bolivar,Bolívar,-34.6094245,-58.3762727,E
-correocentral,Correo Central,-34.6031305,-58.3729475,E
-catalinas,Catalinas,-34.5965586,-58.3745719,E
-retiroe,Retiro,-34.5916364,-58.3748868,E
+value,label,lat,lng,linea,IDs,iniDec,iniIz,frecuencia_L-V,inicio_S,frecuencia_S,inicio_D-F,frecuencia_D-F
+alberti,Alberti,-34.6098335784398,-58.401207534233,A,1,5:38,5:47,4,6:17,,8:17,
+pasco,Pasco,-34.6096459617052,-58.3984269918123,A,2,5:37,5:48,4,,,,
+congreso,Congreso,-34.6092256843174,-58.3926688246648,A,3,5:36,5:49,4,,,,
+saenzpena,Sáenz Peña,-34.6094125865027,-58.3867771940873,A,4,5:34,5:51,4,,,,
+lima,Lima,-34.6090998065519,-58.3822324010181,A,5,5:33,5:52,4,,,,
+piedras,Piedras,-34.608881721215,-58.3790851530908,A,6,5:32,5:53,4,,,,
+peru,Perú,-34.6085590738532,-58.3742677264304,A,7,5:31,5:54,4,,,,
+plzmayo,Plaza de Mayo Casa Rosada,-34.6086997,-58.3714911,A,8,5:30,5:55,4,,,,
+pasteur,Pasteur AMIA,-34.604623105662,-58.399357348627,B,1,5:37,5:48,5,,,,
+callaomaestro,Callao Maestro A. Bravo,-34.6045542,-58.3931682,B,2,5:35,5:50,5,,,,
+uruguay,Uruguay,-34.604076,-58.3868214,B,3,5:34,5:51,5,,,,
+carlospellegrini,Carlos Pellegrini,-34.6034877,-58.3807319,B,4,5:32,5:53,5,,,,
+florida,Florida,-34.6033,-58.37453,B,5,5:31,5:54,5,,,,
+leandro,Leandro N. Alem,-34.6030011,-58.3706754,B,6,5:30,5:55,5,,,,
+constitucion,Constitución,-34.6275021,-58.3824531,C,1,5:41,5:30,3,,,,
+sanjuan,San Juan,-34.6226762706,-58.379951566484,C,2,5:40,5:31,3,,,,
+independencia,Independencia,-34.6200717,-58.383713,C,3,5:38,5:32,3,,,,
+moreno,Moreno,-34.612434686061,-58.380517847867,C,4,5:37,5:34,3,,,,
+avdemayo,Avenida de Mayo,-34.60899098,-58.38068279,C,5,5:36,5:35,3,,,,
+diagonal,Diagonal Norte,-34.6048383,-58.3794651,C,6,5:35,5:37,3,,,,
+lavalle,Lavalle,-34.594872221186,-58.378115594396,C,7,5:33,5:38,3,,,,
+sanmartin,General San Martín,-34.600809,-58.3848683,C,8,5:31,5:40,3,,,,
+retiroc,Retiro,-34.5916364,-58.3748868,C,9,5:30,5:41,3,,,,
+facultadmedicina,Facultad de Medicina,-34.599727,-58.3972006,D,1,5:36,5:47,4,,,,
+callao,Callao,-34.5996286,-58.392559,D,2,5:34,5:49,4,,,,
+tribunales,Tribunales Teatro Colon,-34.6015524,-58.3850202,D,3,5:32,5:51,4,,,,
+9dejulio,9 de Julio,-34.6044707,-58.3801163,D,4,5:31,5:52,4,,,,
+catedral,Catedral,-34.6076198,-58.3742565,D,5,5:30,5:53,4,,,,
+pichincha,Pichincha,-34.6232753,-58.3995216,E,1,5:44,5:42,7,,,,
+entrerios-rodolfowalsh,Entre Ríos - Rodolfo Walsh,-34.622976,-58.3938755,E,2,5:45,5:41,7,,,,
+sanjose,San José,-34.6222576,-58.3877218,E,3,5:47,5:39,7,,,,
+independenciae,Independencia,-34.6180704,-58.3834729,E,4,5:49,5:38,7,,,,
+belgrano,Belgrano,-34.6124483,-58.3810317,E,5,5:50,5:36,7,,,,
+bolivar,Bolívar,-34.6094245,-58.3762727,E,6,5:51,5:35,7,,,,
+correocentral,Correo Central,-34.6031305,-58.3729475,E,7,5:53,5:33,7,,,,
+catalinas,Catalinas,-34.5965586,-58.3745719,E,8,5:55,5:31,7,,,,
+retiroe,Retiro,-34.5916364,-58.3748868,E,9,5:56,5:30,7,,,,

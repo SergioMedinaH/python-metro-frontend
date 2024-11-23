@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
 import { cn } from '@/lib/utils';
 import Image from 'next/image';
@@ -21,6 +21,7 @@ import {
 } from "@/components/ui/accordion"
 import { Accessibility, ChevronRight, LoaderCircle, X } from 'lucide-react';
 import Papa from 'papaparse';
+import { Time } from '@internationalized/date';
 
 export default function Home() {
   const [paradas, setParadas] = useState<Parada[]>([]); // Estado tipado para las paradas
@@ -77,6 +78,13 @@ export default function Home() {
     if (paradaDestino !== value) setParadaDestino(value);
   }
 
+  const [time, setTime] = React.useState(new Time(
+    new Date().getHours(),
+    new Date().getMinutes()
+  ));
+  const [date, setDate] = React.useState<Date>(new Date());
+  const [prioridadTransbordos, setPrioridadTransbordos] = useState(false);
+
   // variable que almacena la ruta devuelta por la API
   const [resultado, setResultado] = useState<ApiResponse>();
   // variable que almacena si se está buscando la ruta
@@ -87,7 +95,7 @@ export default function Home() {
     setLoading(true);
     try {
       // Construir la URL con los parámetros de la solicitud GET
-      const url = `https://python-metro-api.vercel.app/api?paradaOrigen=${encodeURIComponent(paradaOrigen)}&paradaDestino=${encodeURIComponent(paradaDestino)}`;
+      const url = `https://python-metro-api.vercel.app/api?paradaOrigen=${encodeURIComponent(paradaOrigen)}&paradaDestino=${encodeURIComponent(paradaDestino)}&hora=${time.hour.toString().padStart(2, '0')}:${time.minute.toString().padStart(2, '0')}&fecha=${date.getDay()}&prioridadTransbordos=${prioridadTransbordos.toString()}`;
 
       // Realizar la solicitud GET a la API
       const response = await fetch(url);
@@ -178,12 +186,14 @@ export default function Home() {
             onSelect={handleSelectParadaDestino}
             selectedValue={paradaDestino}
           />
+          
           <Accordion type="single" collapsible>
             <AccordionItem value="item-1">
               <AccordionTrigger className='text-sm'>Más opciones</AccordionTrigger>
               <AccordionContent className='flex flex-col gap-4 mt-2'>
-                <TimeInput/>
-                <DatePickerWithPresets/>
+                <TimeInput time={time} setTime={setTime}/>
+                
+                <DatePickerWithPresets date={date} setDate={setDate}/>
                 {/**
                  <div className='flex gap-2 items-center'>
                   <Switch/>
@@ -191,7 +201,7 @@ export default function Home() {
                 </div>
                  */}
                 
-                <SwitchPrioridad/>
+                <SwitchPrioridad prioridadTransbordos={prioridadTransbordos} setPrioridadTransbordos={setPrioridadTransbordos}/>
               </AccordionContent>
             </AccordionItem>
           </Accordion>

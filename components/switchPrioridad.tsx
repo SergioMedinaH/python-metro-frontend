@@ -4,34 +4,34 @@ import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { useState } from "react";
 
-export default function SwitchPrioridad() {
-  const [checked, setChecked] = useState(false);
+export default function SwitchPrioridad({prioridadTransbordos, setPrioridadTransbordos}: {prioridadTransbordos: boolean, setPrioridadTransbordos: (prioridadTransbordos: boolean) => void}) {
+  
 
-  const toggleSwitch = () => setChecked((prev) => !prev);
+  const toggleSwitch = () => setPrioridadTransbordos(!prioridadTransbordos);
 
   return (
     <div className="">
       <div
         className="group inline-flex items-center justify-between gap-2 w-full px-4"
-        data-state={checked ? "checked" : "unchecked"}
+        data-state={prioridadTransbordos ? "checked" : "unchecked"}
       >
         <span
           id="switch-off-label"
           className="cursor-pointer text-right text-sm font-medium group-data-[state=checked]:text-muted-foreground/70"
-          onClick={() => setChecked(false)}
+          onClick={() => setPrioridadTransbordos(false)}
         >
           Menos tiempo
         </span>
         <Switch
           id="switch-09"
-          checked={checked}
+          checked={prioridadTransbordos}
           onCheckedChange={toggleSwitch}
           aria-labelledby="switch-off-label switch-on-label"
         />
         <span
           id="switch-on-label"
           className=" cursor-pointer text-left text-sm font-medium group-data-[state=unchecked]:text-muted-foreground/70"
-          onClick={() => setChecked(true)}
+          onClick={() => setPrioridadTransbordos(true)}
         >
           Menos transbordos
         </span>

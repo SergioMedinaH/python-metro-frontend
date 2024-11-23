@@ -15,8 +15,8 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover"
 
-export function DatePickerWithPresets() {
-  const [date, setDate] = React.useState<Date>(new Date())
+export function DatePickerWithPresets({date, setDate}: {date: Date, setDate: (date: Date) => void}) {
+  
 
   const handlePresetClick = (daysToAdd: number) => {
     setDate(addDays(new Date(), daysToAdd))
