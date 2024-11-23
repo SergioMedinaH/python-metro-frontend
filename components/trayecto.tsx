@@ -1,6 +1,6 @@
 import { cn } from "@/lib/utils";
 import ItemTrayecto from "./itemtrayecto";
-import { ArrowUpDown, ChevronRight } from "lucide-react";
+import { ArrowUpDown, ChevronRight, LogOut, TrainFront } from "lucide-react";
 import { Trayecto } from "@/types/global";
 
 export default function TrayectoComponente({trayecto}: {trayecto: Trayecto}) {
@@ -70,8 +70,9 @@ export default function TrayectoComponente({trayecto}: {trayecto: Trayecto}) {
         </div>
     </div>
     } else {
-        return(
-            <div key={trayecto.linea + trayecto.paradas[0]} className='flex border-b w-full mt-2'>
+        if (trayecto.paradas.length > 1) {
+            return(
+                <div key={trayecto.linea + trayecto.paradas[0]} className='flex border-b w-full mt-2'>
                 <div className="flex flex-col gap-2 p-2 w-full">
                     <div className="flex justify-between gap-2 font-bold text-lg">
                         <span className={cn(
@@ -84,13 +85,26 @@ export default function TrayectoComponente({trayecto}: {trayecto: Trayecto}) {
                             )}>Línea {trayecto.linea}</span>
                         {tiempoTotal > 0 && <span className=''>{tiempoTotal} min{tiempoTotal > 1 && "s"}</span>}
                     </div>
+                    
+                    <div className="flex justify-between gap-2">
+                        <p className='text-sm text-black/60 flex gap-1 items-center'><TrainFront className='w-4 h-4 text-black'/> Pasa en <span className="font-bold">3 mins</span> | <span className="font-bold">12:34</span></p>
+                        <p className='text-sm text-black/60 items-center'><span className="font-bold">3</span>, 6, 10 mins</p>
+                    </div>
+                    <p className="text-sm text-black/60">Sentido: <span className="font-bold">Catedral</span></p>
+                    
                     <div className="flex flex-col">
                         {trayecto.paradas.map((parada, index) => (
                             <ItemTrayecto parada={parada} tiempo={trayecto.tiempos[index-1]} key={index} especial={index === 0 || index === trayecto.paradas.length - 1} ultimo={index === trayecto.paradas.length - 1}/>
                         ))}
                     </div>
+                    
+                    <p className='mb-2 text-sm text-black/60 flex gap-1 items-center'><LogOut className='w-4 h-4 text-black'/> Sales en <span className="font-bold">9 mins</span> | <span className="font-bold">23:45</span></p>
+                     
                 </div>
             </div>
-        )
+            )
+        }else {
+            return <></>
+        }
     }
 }

@@ -19,7 +19,7 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion"
-import { Accessibility, ChevronRight, LoaderCircle, X } from 'lucide-react';
+import { Accessibility, ChevronRight, LoaderCircle, LogIn, LogOut, X } from 'lucide-react';
 import Papa from 'papaparse';
 import { Time } from '@internationalized/date';
 
@@ -167,7 +167,7 @@ export default function Home() {
   return (
     <div className="flex h-screen w-screen overflow-hidden">
       {/* Panel de la izquierda */}
-      <div className="w-full bg-white p-4 overflow-y-auto drop-shadow-md sm:w-[380px] sm:min-w-[380px]">
+      <div className="w-full bg-white p-4 overflow-y-auto drop-shadow-md sm:w-[420px] sm:min-w-[420px]">
         <div className='flex flex-col gap-4'>
           <div className='flex gap-4 items-center'>
             <Image className='w-10 h-10 rounded-full' src="https://yt3.googleusercontent.com/ytc/AIdro_kAiJ6bQM7QGSoIQNklbeEYEUBMgLWsZHxBo4K2RTLTrII=s900-c-k-c0x00ffffff-no-rj" width={200} height={200} alt="Icono Metro"/>
@@ -211,10 +211,10 @@ export default function Home() {
           {/* Resultado de la ruta */}
           {resultado &&
           <div className=' flex flex-col gap-4'>
-            <div className='mt-4'>
-              <div className='flex gap-4'>
-                <span className='font-bold text-lg'>{resultado.tiempos.reduce((acumulador, tiempo) => acumulador + tiempo, 0)} min{resultado.tiempos.reduce((acumulador, tiempo) => acumulador + tiempo, 0) > 1 && "s"}</span>
-                <div className='font-bold text-lg flex items-center justify-center'>
+            <div className='mt-4 flex flex-col gap-1'>
+              <div className='flex gap-2'>
+                <span className='font-bold text-lg '>{resultado.tiempos.reduce((acumulador, tiempo) => acumulador + tiempo, 0)} min{resultado.tiempos.reduce((acumulador, tiempo) => acumulador + tiempo, 0) > 1 && "s"}</span>
+                <div className='font-bold text-lg flex items-center justify-center '>
                   {trayectosState.map((trayecto, index) => {
                     if (trayecto.linea === "Transbordo") {
                       return (
@@ -238,16 +238,40 @@ export default function Home() {
                   })}
                 </div>
               </div>
-              <div className='flex gap-1'>
-                <p className='text-sm'>{resultado.ruta.length} parada{resultado.ruta.length > 1 && "s"}.</p>
-                <p className='text-sm'>{trayectosState.filter(trayecto => trayecto.linea === "Transbordo").length} transbordo{trayectosState.filter(trayecto => trayecto.linea === "Transbordo").length > 1 && "s"}.</p>
+              <p className=' text-black/60'>Hora de llegada: <span className='font-bold'>12:34</span>.</p>
+              <div className='flex gap-1 text-black/60 text-sm'>
+                <p className=''>{resultado.ruta.length} parada{resultado.ruta.length > 1 && "s"}.</p>
+                <p className=''>{trayectosState.filter(trayecto => trayecto.linea === "Transbordo").length} transbordo{trayectosState.filter(trayecto => trayecto.linea === "Transbordo").length !== 1 && "s"}.</p>
               </div>
+              
             </div>
+            
+            {trayectosState[0] &&
+            <div className='text-lg border-t pt-4 flex gap-2 items-center'><LogIn className='w-5 h-5'/> Entra en <div  className={cn(
+                          'w-5 h-5 rounded-sm flex text-center items-center font-bold justify-center text-white',
+                          trayectosState[0].linea === 'A' && 'bg-lineaA',
+                          trayectosState[0].linea === 'B' && 'bg-lineaB',
+                          trayectosState[0].linea === 'C' && 'bg-lineaC',
+                          trayectosState[0].linea === 'D' && 'bg-lineaD',
+                          trayectosState[0].linea === 'E' && 'bg-lineaE',
+                          )}>{trayectosState[0].linea}</div><span className='font-bold'>{trayectosState[0].paradas[0].label}</span></div>
+            }
             <div className='flex flex-col border-t'>
               {trayectosState.map((trayecto, index) => (
                 <TrayectoComponente trayecto={trayecto} key={index}/>
               ))}
             </div>
+            {trayectosState[trayectosState.length - 1] &&
+            <div className='text-lg border-b pb-4 flex gap-2 items-center'><LogOut className='w-5 h-5'/> Sal en <div  className={cn(
+                          'w-5 h-5 rounded-sm flex text-center items-center font-bold justify-center text-white',
+                          trayectosState[trayectosState.length - 1].linea === 'A' && 'bg-lineaA',
+                          trayectosState[trayectosState.length - 1].linea === 'B' && 'bg-lineaB',
+                          trayectosState[trayectosState.length - 1].linea === 'C' && 'bg-lineaC',
+                          trayectosState[trayectosState.length - 1].linea === 'D' && 'bg-lineaD',
+                          trayectosState[trayectosState.length - 1].linea === 'E' && 'bg-lineaE',
+                          )}>{trayectosState[trayectosState.length - 1].linea}</div><span className='font-bold'>{trayectosState[trayectosState.length - 1].paradas[trayectosState[trayectosState.length - 1].paradas.length - 1].label}</span></div>
+            }
+            
           </div>
           }
         </div>
