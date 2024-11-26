@@ -23,6 +23,66 @@ import { Accessibility, ChevronRight, LoaderCircle, LogIn, LogOut, X } from 'luc
 import Papa from 'papaparse';
 import { Time } from '@internationalized/date';
 
+
+/*
+  ejemplo resultado de la API:
+  [
+    {
+        "linea": "A",
+        "paradas": [
+            {
+                "value": "saenzpena",
+                ...
+            },
+            {
+                "value": "lima",
+                ...
+            },
+            {
+                "value": "piedras",
+                ...
+            },
+            {
+                "value": "peru",
+                ...
+            }
+        ],
+        "tiempoEspera": 3,
+        "horaSalida": "5:30",
+        "tiempoEsperaSalida": 9,
+        "horaFin": "6:20",
+        "tiempos": [
+            2,
+            2,
+            2
+        ]
+    },
+    {
+        "linea": "Transbordo",
+        "paradas": [
+            {
+                "value": "peru",
+                ...
+            },
+            {
+                "value": "catedral",
+                ...
+            }
+        ],
+        "tiempos": [
+            2
+        ]
+    },
+    ...
+]
+
+*/
+
+
+
+
+
+
 export default function Home() {
   const [paradas, setParadas] = useState<Parada[]>([]); // Estado tipado para las paradas
 
@@ -85,8 +145,10 @@ export default function Home() {
   const [date, setDate] = React.useState<Date>(new Date());
   const [prioridadTransbordos, setPrioridadTransbordos] = useState(false);
 
+  const [trayectosState, setTrayectosState] = useState<ApiResponse>({trayectos: [], ruta: [], tiempos: [], duracionTotal: 0});
+
   // variable que almacena la ruta devuelta por la API
-  const [resultado, setResultado] = useState<ApiResponse>();
+  //const [resultado, setResultado] = useState<ApiResponse>();
   // variable que almacena si se está buscando la ruta
   const [loading, setLoading] = useState(false);
   
@@ -107,8 +169,9 @@ export default function Home() {
 
       // Parsear la respuesta como JSON
       const data: ApiResponse = await response.json();
-      setResultado(data);
-      
+      //setResultado(data);
+
+      setTrayectosState(data);
     } catch (error) {
       // Manejar errores en la solicitud
       console.error("Error fetching route:", error);
@@ -120,16 +183,17 @@ export default function Home() {
   let paradasRuta: Parada[] = [];
   let trayectos: Trayecto[] = [];
 
-  const [trayectosState, setTrayectosState] = useState<Trayecto[]>([]);
+  
 
   // función que obtiene los trayectos si se actualiza el resultado
+  /** 
   useEffect(() => {
     setTrayectosState([]);
     if (resultado) {
       paradasRuta = getOrderedParadas(resultado.ruta);
       if (paradasRuta && paradasRuta.length > 0) {
         trayectos = [];
-        let trayectoActual: Trayecto = { linea: paradasRuta[0].linea, paradas: [paradasRuta[0]], tiempos: [] };
+        let trayectoActual: Trayecto = { linea: paradasRuta[0].linea, paradas: [paradasRuta[0]], tiempos: [] , horaFin: "00:00"};
 
         paradasRuta.forEach((parada,index) => {
           if (index === 0) return;
@@ -142,8 +206,8 @@ export default function Home() {
           }
           else {
             trayectos.push(trayectoActual);
-            trayectos.push({ linea: "Transbordo", paradas: [paradaAnterior, parada], tiempos: [resultado.tiempos[index - 1]] });
-            trayectoActual = { linea: parada.linea, paradas: [parada], tiempos: [] };
+            trayectos.push({ linea: "Transbordo", paradas: [paradaAnterior, parada], tiempos: [resultado.tiempos[index - 1]], horaFin: "Es un trayecto" });
+            trayectoActual = { linea: parada.linea, paradas: [parada], tiempos: [], horaFin: "00:00" };
           }
         });
         trayectos.push(trayectoActual);
@@ -154,13 +218,14 @@ export default function Home() {
     }
     setTrayectosState(trayectos);
   }, [resultado]);
+  */
 
   // función que limpia la ruta,trayectos y resultado si se actualiza la parada de origen o destino
   useEffect(() => {
     paradasRuta = [];
     trayectos = [];
-    setTrayectosState([]);
-    setResultado(undefined);
+    setTrayectosState({trayectos: [], ruta: [], tiempos: [], duracionTotal: 0});
+    //setResultado(undefined);
   }, [paradaOrigen, paradaDestino]);
 
   // código de la interfaz
@@ -209,13 +274,13 @@ export default function Home() {
             {loading ? <span className='flex gap-2'><LoaderCircle className='w-5 h-5 animate-spin'/> Buscando la mejor ruta...</span> : 'Buscar Ruta'}
           </Button>
           {/* Resultado de la ruta */}
-          {resultado &&
+          {trayectosState.trayectos.length > 0 &&
           <div className=' flex flex-col gap-4'>
             <div className='mt-4 flex flex-col gap-1'>
               <div className='flex gap-2'>
-                <span className='font-bold text-lg '>{resultado.tiempos.reduce((acumulador, tiempo) => acumulador + tiempo, 0)} min{resultado.tiempos.reduce((acumulador, tiempo) => acumulador + tiempo, 0) > 1 && "s"}</span>
+                <span className='font-bold text-lg '>{Math.round(trayectosState.duracionTotal/60)} min{Math.round(trayectosState.duracionTotal/60) > 1 && "s"}</span>
                 <div className='font-bold text-lg flex items-center justify-center '>
-                  {trayectosState.map((trayecto, index) => {
+                  {trayectosState.trayectos.map((trayecto, index) => {
                     if (trayecto.linea === "Transbordo") {
                       return (
                         <ChevronRight className='w-5 h-5' key={index}/>
@@ -238,38 +303,41 @@ export default function Home() {
                   })}
                 </div>
               </div>
-              <p className=' text-black/60'>Hora de llegada: <span className='font-bold'>12:34</span>.</p>
+              <div>
+                
+              </div>
+              <p className=' text-black/60'>Hora de llegada: <span className='font-bold'>{trayectosState.trayectos.filter(trayecto => trayecto.linea !== "Transbordo").pop()?.horaFin}</span>.</p>
               <div className='flex gap-1 text-black/60 text-sm'>
-                <p className=''>{resultado.ruta.length} parada{resultado.ruta.length > 1 && "s"}.</p>
-                <p className=''>{trayectosState.filter(trayecto => trayecto.linea === "Transbordo").length} transbordo{trayectosState.filter(trayecto => trayecto.linea === "Transbordo").length !== 1 && "s"}.</p>
+                <p className=''>{trayectosState.ruta.length} parada{trayectosState.ruta.length > 1 && "s"}.</p>
+                <p className=''>{trayectosState.trayectos.filter(trayecto => trayecto.linea === "Transbordo").length} transbordo{trayectosState.trayectos.filter(trayecto => trayecto.linea === "Transbordo").length !== 1 && "s"}.</p>
               </div>
               
             </div>
             
-            {trayectosState[0] &&
+            {trayectosState.trayectos[0] &&
             <div className='text-lg border-t pt-4 flex gap-2 items-center'><LogIn className='w-5 h-5'/> Entra en <div  className={cn(
                           'w-5 h-5 rounded-sm flex text-center items-center font-bold justify-center text-white',
-                          trayectosState[0].linea === 'A' && 'bg-lineaA',
-                          trayectosState[0].linea === 'B' && 'bg-lineaB',
-                          trayectosState[0].linea === 'C' && 'bg-lineaC',
-                          trayectosState[0].linea === 'D' && 'bg-lineaD',
-                          trayectosState[0].linea === 'E' && 'bg-lineaE',
-                          )}>{trayectosState[0].linea}</div><span className='font-bold'>{trayectosState[0].paradas[0].label}</span></div>
+                          trayectosState.trayectos[0].linea === 'A' && 'bg-lineaA',
+                          trayectosState.trayectos[0].linea === 'B' && 'bg-lineaB',
+                          trayectosState.trayectos[0].linea === 'C' && 'bg-lineaC',
+                          trayectosState.trayectos[0].linea === 'D' && 'bg-lineaD',
+                          trayectosState.trayectos[0].linea === 'E' && 'bg-lineaE',
+                          )}>{trayectosState.trayectos[0].linea}</div><span className='font-bold'>{trayectosState.trayectos[0].paradas[0].label}</span></div>
             }
             <div className='flex flex-col border-t'>
-              {trayectosState.map((trayecto, index) => (
+              {trayectosState.trayectos.map((trayecto, index) => (
                 <TrayectoComponente trayecto={trayecto} key={index}/>
               ))}
             </div>
-            {trayectosState[trayectosState.length - 1] &&
+            {trayectosState.trayectos[trayectosState.trayectos.length - 1] &&
             <div className='text-lg border-b pb-4 flex gap-2 items-center'><LogOut className='w-5 h-5'/> Sal en <div  className={cn(
                           'w-5 h-5 rounded-sm flex text-center items-center font-bold justify-center text-white',
-                          trayectosState[trayectosState.length - 1].linea === 'A' && 'bg-lineaA',
-                          trayectosState[trayectosState.length - 1].linea === 'B' && 'bg-lineaB',
-                          trayectosState[trayectosState.length - 1].linea === 'C' && 'bg-lineaC',
-                          trayectosState[trayectosState.length - 1].linea === 'D' && 'bg-lineaD',
-                          trayectosState[trayectosState.length - 1].linea === 'E' && 'bg-lineaE',
-                          )}>{trayectosState[trayectosState.length - 1].linea}</div><span className='font-bold'>{trayectosState[trayectosState.length - 1].paradas[trayectosState[trayectosState.length - 1].paradas.length - 1].label}</span></div>
+                          trayectosState.trayectos[trayectosState.trayectos.length - 1].linea === 'A' && 'bg-lineaA',
+                          trayectosState.trayectos[trayectosState.trayectos.length - 1].linea === 'B' && 'bg-lineaB',
+                          trayectosState.trayectos[trayectosState.trayectos.length - 1].linea === 'C' && 'bg-lineaC',
+                          trayectosState.trayectos[trayectosState.trayectos.length - 1].linea === 'D' && 'bg-lineaD',
+                          trayectosState.trayectos[trayectosState.trayectos.length - 1].linea === 'E' && 'bg-lineaE',
+                          )}>{trayectosState.trayectos[trayectosState.trayectos.length - 1].linea}</div><span className='font-bold'>{trayectosState.trayectos[trayectosState.trayectos.length - 1].paradas[trayectosState.trayectos[trayectosState.trayectos.length - 1].paradas.length - 1].label}</span></div>
             }
             
           </div>
@@ -278,7 +346,7 @@ export default function Home() {
       </div>
       {/* Mapa de la derecha */}
       {paradas.length > 0 ?
-      <OpenLayersMap paradas={paradas} paradaOrigen={paradaOrigen} paradaDestino={paradaDestino} onSelectOrigen={handleSelectParadaOrigen} onSelectDestino={handleSelectParadaDestino} trayecto={trayectosState} transbordos={transbordos}/>
+      <OpenLayersMap paradas={paradas} paradaOrigen={paradaOrigen} paradaDestino={paradaDestino} onSelectOrigen={handleSelectParadaOrigen} onSelectDestino={handleSelectParadaDestino} trayecto={trayectosState.trayectos} transbordos={transbordos}/>
       : <div className='flex items-center justify-center w-full h-full'>
           <p className='text-sm flex gap-2 items-center'><LoaderCircle className='w-5 h-5 animate-spin'/> Cargando mapa... </p>
         </div>

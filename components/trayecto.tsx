@@ -33,7 +33,7 @@ export default function TrayectoComponente({trayecto}: {trayecto: Trayecto}) {
                         )}>{trayecto.paradas[1].linea}</div>
                     </div>
                 </div>
-                <span className=''>{tiempoTotal} min{tiempoTotal > 1 && "s"}</span>
+                <span className=''>{Math.round(tiempoTotal / 60)} min{tiempoTotal > 60 && "s"}</span>
             </div>
                 
             <div className='flex flex-col gap-1'>
@@ -63,7 +63,7 @@ export default function TrayectoComponente({trayecto}: {trayecto: Trayecto}) {
                     )}>{trayecto.paradas[1].linea}</div>
                     <div className="flex justify-between w-full">
                     <p>{trayecto.paradas[1].label}</p>
-                    <p className="text-sm text-black/60">{trayecto.tiempos[0]} min{trayecto.tiempos[0] > 1 && "s"}</p>
+                    <p className="text-sm text-black/60">{Math.round(trayecto.tiempos[0] / 60)} min{Math.round(trayecto.tiempos[0] / 60) > 1 && "s"}</p>
                     </div>
                 </div>
             </div>
@@ -87,10 +87,13 @@ export default function TrayectoComponente({trayecto}: {trayecto: Trayecto}) {
                     </div>
                     
                     <div className="flex justify-between gap-2">
-                        <p className='text-sm text-black/60 flex gap-1 items-center'><TrainFront className='w-4 h-4 text-black'/> Pasa en <span className="font-bold">3 mins</span> | <span className="font-bold">12:34</span></p>
-                        <p className='text-sm text-black/60 items-center'><span className="font-bold">3</span>, 6, 10 mins</p>
+                        <p className='text-sm text-black/60 flex gap-1 items-center'><TrainFront className='w-4 h-4 text-black'/>Espera <span className="font-bold">{Math.round(trayecto.tiempoEspera/60)} min{ Math.round(trayecto.tiempoEspera/60) !== 1 && "s"}</span> | <span className="font-bold">{trayecto.horaSalida}</span></p>
+                        <p className='text-sm text-black/60 items-center'><span className="font-bold">{Math.round(trayecto.tiempoEspera/60)}</span>, {Math.round(trayecto.tiempoEspera/60) + trayecto.paradas[0].frecuencia}, {Math.round(trayecto.tiempoEspera/60) + 2 * trayecto.paradas[0].frecuencia} mins</p>
                     </div>
-                    <p className="text-sm text-black/60">Sentido: <span className="font-bold">Catedral</span></p>
+                    {/*
+                        <p className="text-sm text-black/60">Sentido: <span className="font-bold">Catedral</span></p>
+                     */}
+                    
                     
                     <div className="flex flex-col">
                         {trayecto.paradas.map((parada, index) => (
@@ -98,7 +101,7 @@ export default function TrayectoComponente({trayecto}: {trayecto: Trayecto}) {
                         ))}
                     </div>
                     
-                    <p className='mb-2 text-sm text-black/60 flex gap-1 items-center'><LogOut className='w-4 h-4 text-black'/> Sales en <span className="font-bold">9 mins</span> | <span className="font-bold">23:45</span></p>
+                    <p className='mb-2 text-sm text-black/60 flex gap-1 items-center'><LogOut className='w-4 h-4 text-black'/> Sales <span className="font-bold">{Math.round(trayecto.tiempoEsperaSalida/60)} mins</span> despues | <span className="font-bold">{trayecto.horaFin}</span></p>
                      
                 </div>
             </div>
