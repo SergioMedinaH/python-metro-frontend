@@ -28,7 +28,7 @@ export default function ItemTrayecto({parada, tiempo, especial, ultimo}: {parada
                           '',
                           especial && 'text-lg font-semibold',
                           )}>{parada.label}</span>
-            {tiempo > 0 && <span className='text-black/60 text-sm'>{tiempo} min{tiempo > 1 && "s"}</span>}
+            {Math.round(tiempo / 60) > 0 && <span className='text-black/60 text-sm'>{Math.round(tiempo / 60)} min{Math.round(tiempo / 60) > 1 && "s"}</span>}
         </div>
       </div>
     )

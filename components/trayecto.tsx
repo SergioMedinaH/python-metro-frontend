@@ -83,7 +83,7 @@ export default function TrayectoComponente({trayecto}: {trayecto: Trayecto}) {
                             trayecto.linea === 'D' && 'text-lineaD',
                             trayecto.linea === 'E' && 'text-lineaE',
                             )}>Línea {trayecto.linea}</span>
-                        {tiempoTotal > 0 && <span className=''>{tiempoTotal} min{tiempoTotal > 1 && "s"}</span>}
+                        {Math.round(tiempoTotal / 60) > 0 && <span className=''>{tiempoTotal} min{tiempoTotal > 1 && "s"}</span>}
                     </div>
                     
                     <div className="flex justify-between gap-2">
