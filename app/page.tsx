@@ -19,7 +19,7 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion"
-import { Accessibility, ChevronRight, LoaderCircle, LogIn, LogOut, X } from 'lucide-react';
+import { Accessibility, ChevronRight, ClockAlert, LoaderCircle, LogIn, LogOut, X } from 'lucide-react';
 import Papa from 'papaparse';
 import { Time } from '@internationalized/date';
 
@@ -145,12 +145,26 @@ export default function Home() {
   const [date, setDate] = React.useState<Date>(new Date());
   const [prioridadTransbordos, setPrioridadTransbordos] = useState(false);
 
-  const [trayectosState, setTrayectosState] = useState<ApiResponse>({trayectos: [], ruta: [], tiempos: [], duracionTotal: 0});
+  const [trayectosState, setTrayectosState] = useState<ApiResponse>({trayectos: [], ruta: [], tiempos: [], duracionTotal: 0, horaLlegada: "00:00"});
 
   // variable que almacena la ruta devuelta por la API
   //const [resultado, setResultado] = useState<ApiResponse>();
   // variable que almacena si se está buscando la ruta
   const [loading, setLoading] = useState(false);
+
+  const esHoraValida = (horaLlegada: string): boolean => {
+    // Descomponer la hora y los minutos
+    const [hora, minutos] = horaLlegada.split(':').map(Number);
+
+    // Convertir la hora y minutos de entrada a minutos totales
+    const minutosTotalesLlegada = hora * 60 + minutos;
+
+    // Hora límite (23:30) en minutos totales
+    const minutosTotalesLimite = 23 * 60 + 30;
+
+    // Comparar los minutos totales
+    return minutosTotalesLlegada < minutosTotalesLimite;
+  };
   
   // función que calcula la ruta (llama a la API)
   const CalcularRuta = async () => {
@@ -224,7 +238,7 @@ export default function Home() {
   useEffect(() => {
     paradasRuta = [];
     trayectos = [];
-    setTrayectosState({trayectos: [], ruta: [], tiempos: [], duracionTotal: 0});
+    setTrayectosState({trayectos: [], ruta: [], tiempos: [], duracionTotal: 0, horaLlegada: "00:00"});
     //setResultado(undefined);
   }, [paradaOrigen, paradaDestino]);
 
@@ -274,11 +288,26 @@ export default function Home() {
             {loading ? <span className='flex gap-2'><LoaderCircle className='w-5 h-5 animate-spin'/> Buscando la mejor ruta...</span> : 'Buscar Ruta'}
           </Button>
           {/* Resultado de la ruta */}
+          
           {trayectosState.trayectos.length > 0 &&
+          <>
+          {esHoraValida(trayectosState.horaLlegada) ? 
           <div className=' flex flex-col gap-4'>
             <div className='mt-4 flex flex-col gap-1'>
+              {Math.round(trayectosState.duracionTotal/3600) > 1 && 
+                <div className='flex items-center justify-center text-center border text-red-600 bg-red-50 border-red-600 rounded-md py-4 gap-2 mb-4'>
+                   <ClockAlert className='w-4 h-4'/> <span className=''>El metro todavía no ha abierto</span>
+                </div>}
               <div className='flex gap-2'>
-                <span className='font-bold text-lg '>{Math.round(trayectosState.duracionTotal/60)} min{Math.round(trayectosState.duracionTotal/60) > 1 && "s"}</span>
+                <span className='font-bold text-lg '>
+                  { 
+                    Math.round(trayectosState.duracionTotal/3600) > 1 ? 
+                    <span>{Math.round(trayectosState.duracionTotal/3600)} h{Math.round(trayectosState.duracionTotal/3600) > 1 && "s"}</span>:
+                    
+                    <span>{Math.round(trayectosState.duracionTotal/60)} min{Math.round(trayectosState.duracionTotal/60) > 1 && "s"}</span>
+
+                  }
+                </span>
                 <div className='font-bold text-lg flex items-center justify-center '>
                   {trayectosState.trayectos.map((trayecto, index) => {
                     if (trayecto.linea === "Transbordo") {
@@ -306,7 +335,7 @@ export default function Home() {
               <div>
                 
               </div>
-              <p className=' text-black/60'>Hora de llegada: <span className='font-bold'>{trayectosState.trayectos.filter(trayecto => trayecto.linea !== "Transbordo").pop()?.horaFin}</span>.</p>
+              <p className=' text-black/60'>Hora de llegada: <span className='font-bold'>{trayectosState.horaLlegada}</span>.</p>
               <div className='flex gap-1 text-black/60 text-sm'>
                 <p className=''>{trayectosState.ruta.length} parada{trayectosState.ruta.length > 1 && "s"}.</p>
                 <p className=''>{trayectosState.trayectos.filter(trayecto => trayecto.linea === "Transbordo").length} transbordo{trayectosState.trayectos.filter(trayecto => trayecto.linea === "Transbordo").length !== 1 && "s"}.</p>
@@ -341,7 +370,10 @@ export default function Home() {
             }
             
           </div>
-          }
+          : <div className='flex items-center justify-center text-center border text-red-600 bg-red-50 border-red-600 rounded-md py-4 gap-2 mb-4'>
+          <ClockAlert className='w-4 h-4'/> <span className=''>La ruta se sale del horario del metro</span>
+       </div>}
+          </>}
         </div>
       </div>
       {/* Mapa de la derecha */}

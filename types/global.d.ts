@@ -15,6 +15,7 @@ export interface ApiResponse {
     ruta: string[];
     tiempos: number[];
     duracionTotal: number;
+    horaLlegada: string;
 }
 
 export interface Trayecto {

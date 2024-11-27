@@ -6,6 +6,8 @@ import { Trayecto } from "@/types/global";
 export default function TrayectoComponente({trayecto}: {trayecto: Trayecto}) {
     const tiempoTotal = trayecto.tiempos.reduce((acumulador: number, tiempo: number) => acumulador + tiempo, 0)
 
+    
+    
     if (trayecto.linea === 'Transbordo') {
         return <div key={trayecto.linea + trayecto.paradas[0]} className='flex border-b w-full mt-2 pb-2'>
         <div className='h-full w-[5px]text-gray-500'/>
@@ -83,12 +85,26 @@ export default function TrayectoComponente({trayecto}: {trayecto: Trayecto}) {
                             trayecto.linea === 'D' && 'text-lineaD',
                             trayecto.linea === 'E' && 'text-lineaE',
                             )}>Línea {trayecto.linea}</span>
+
+                        
+            
+                        
                         {Math.round(tiempoTotal /60) > 0 && <span className=''>{Math.round(tiempoTotal /60)} min{Math.round(tiempoTotal /60) > 1 && "s"}</span>}
                     </div>
                     
                     <div className="flex justify-between gap-2">
-                        <p className='text-sm text-black/60 flex gap-1 items-center'><TrainFront className='w-4 h-4 text-black'/>Espera <span className="font-bold">{Math.round(trayecto.tiempoEspera/60)} min{ Math.round(trayecto.tiempoEspera/60) !== 1 && "s"}</span> | <span className="font-bold">{trayecto.horaSalida}</span></p>
-                        <p className='text-sm text-black/60 items-center'><span className="font-bold">{Math.round(trayecto.tiempoEspera/60)}</span>, {Math.round(trayecto.tiempoEspera/60) + trayecto.paradas[0].frecuencia}, {Math.round(trayecto.tiempoEspera/60) + 2 * trayecto.paradas[0].frecuencia} mins</p>
+                        <p className='text-sm text-black/60 flex gap-1 items-center'><TrainFront className='w-4 h-4 text-black'/>Espera <span className="font-bold">
+                            { 
+                                Math.round(trayecto.tiempoEspera/3600) > 1 ? 
+                                <span>{Math.round(trayecto.tiempoEspera/3600)} h{Math.round(trayecto.tiempoEspera/3600) > 1 && "s"}</span>:
+                                
+                                <span>{Math.round(trayecto.tiempoEspera/60)} min{Math.round(trayecto.tiempoEspera/60) > 1 && "s"}</span>
+            
+                            }
+                            </span> | <span className="font-bold">{trayecto.horaSalida}</span></p>
+                        <p className='text-sm text-black/60 items-center'>
+                        {Math.round(trayecto.tiempoEspera/3600) <= 1 && <span><span className="font-bold">{Math.round(trayecto.tiempoEspera/60)}</span>, {Math.round(trayecto.tiempoEspera/60) + trayecto.paradas[0].frecuencia}, {Math.round(trayecto.tiempoEspera/60) + 2 * trayecto.paradas[0].frecuencia} mins</span>}
+                        </p>
                     </div>
                     {/*
                         <p className="text-sm text-black/60">Sentido: <span className="font-bold">Catedral</span></p>
@@ -101,7 +117,15 @@ export default function TrayectoComponente({trayecto}: {trayecto: Trayecto}) {
                         ))}
                     </div>
                     
-                    <p className='mb-2 text-sm text-black/60 flex gap-1 items-center'><LogOut className='w-4 h-4 text-black'/> Sales <span className="font-bold">{Math.round(trayecto.tiempoEsperaSalida/60)} mins</span> despues | <span className="font-bold">{trayecto.horaFin}</span></p>
+                    <p className='mb-2 text-sm text-black/60 flex gap-1 items-center'><LogOut className='w-4 h-4 text-black'/> Sales <span className="font-bold">
+                    { 
+                        Math.round(trayecto.tiempoEsperaSalida/3600) > 1 ? 
+                        <span>{Math.round(trayecto.tiempoEsperaSalida/3600)} hs</span>:
+                        
+                        <span>{Math.round(trayecto.tiempoEsperaSalida/60)} mins</span>
+    
+                    }
+                        </span> despues | <span className="font-bold">{trayecto.horaFin}</span></p>
                      
                 </div>
             </div>

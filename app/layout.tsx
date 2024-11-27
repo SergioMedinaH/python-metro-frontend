@@ -6,8 +6,8 @@ import Head from 'next/head';
 const inter = Inter({ subsets: ['latin'] })
 
 export const metadata = {
-  title: 'App Metro',
-  description: 'App Metro',
+  title: 'Subte Buenos Aires',
+  description: 'Subte Buenos Aires',
 }
 
 export default function RootLayout({
