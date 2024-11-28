@@ -3,6 +3,7 @@ import ItemTrayecto from "./itemtrayecto";
 import { ArrowUpDown, ChevronRight, LogOut, TrainFront } from "lucide-react";
 import { Trayecto } from "@/types/global";
 
+
 export default function TrayectoComponente({trayecto}: {trayecto: Trayecto}) {
     const tiempoTotal = trayecto.tiempos.reduce((acumulador: number, tiempo: number) => acumulador + tiempo, 0)
 

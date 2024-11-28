@@ -1,3 +1,5 @@
+import internal from "stream";
+
 export interface Parada {
     value: string;
     label: string;
@@ -5,6 +7,9 @@ export interface Parada {
     lng: number;
     linea: string;
     frecuencia: number;
+    hay_escalera: int;
+    hay_mecanica: int;
+    hay_ascensor: int;
 }
 export interface Transbordo {
     origen: string;

@@ -22,6 +22,9 @@ import {
 import { Accessibility, ChevronRight, ClockAlert, LoaderCircle, LogIn, LogOut, X } from 'lucide-react';
 import Papa from 'papaparse';
 import { Time } from '@internationalized/date';
+import StairsIcon from '@mui/icons-material/Stairs';
+import EscalatorIcon from '@mui/icons-material/Escalator';
+import ElevatorIcon from '@mui/icons-material/Elevator';
 
 
 /*
@@ -191,6 +194,7 @@ export default function Home() {
       console.error("Error fetching route:", error);
     } finally {
       setLoading(false); // Desactivar estado de carga
+      
     }
   };
 
@@ -280,7 +284,10 @@ export default function Home() {
                 </div>
                  */}
                 
-                <SwitchPrioridad prioridadTransbordos={prioridadTransbordos} setPrioridadTransbordos={setPrioridadTransbordos}/>
+                {/**
+                 <SwitchPrioridad prioridadTransbordos={prioridadTransbordos} setPrioridadTransbordos={setPrioridadTransbordos}/>
+                 */}
+                
               </AccordionContent>
             </AccordionItem>
           </Accordion>
@@ -342,16 +349,28 @@ export default function Home() {
               </div>
               
             </div>
-            
             {trayectosState.trayectos[0] &&
-            <div className='text-lg border-t pt-4 flex gap-2 items-center'><LogIn className='w-5 h-5'/> Entra en <div  className={cn(
+            <div className='text-lg border-t pt-4 flex items-center justify-between'>
+              <div className='flex gap-2 items-center'>
+              <LogIn className='w-5 h-5'/> Entra en <div  className={cn(
                           'w-5 h-5 rounded-sm flex text-center items-center font-bold justify-center text-white',
                           trayectosState.trayectos[0].linea === 'A' && 'bg-lineaA',
                           trayectosState.trayectos[0].linea === 'B' && 'bg-lineaB',
                           trayectosState.trayectos[0].linea === 'C' && 'bg-lineaC',
                           trayectosState.trayectos[0].linea === 'D' && 'bg-lineaD',
                           trayectosState.trayectos[0].linea === 'E' && 'bg-lineaE',
-                          )}>{trayectosState.trayectos[0].linea}</div><span className='font-bold'>{trayectosState.trayectos[0].paradas[0].label}</span></div>
+                          )}>{trayectosState.trayectos[0].linea}</div><span className='font-bold'>{trayectosState.trayectos[0].paradas[0].label}</span>
+                          
+                          </div>
+                          
+                          <div className='flex gap-1'>
+                            
+                            {trayectosState.trayectos[0].paradas[0].hay_escalera == 1 && <StairsIcon className='text-black/50'/>}
+                            {trayectosState.trayectos[0].paradas[0].hay_mecanica == 1 && <EscalatorIcon className='text-black/50'/>}
+                            {trayectosState.trayectos[0].paradas[0].hay_ascensor == 1 && <ElevatorIcon className='text-black/50'/>}
+                            
+                          </div>
+                          </div>
             }
             <div className='flex flex-col border-t'>
               {trayectosState.trayectos.map((trayecto, index) => (
@@ -359,14 +378,26 @@ export default function Home() {
               ))}
             </div>
             {trayectosState.trayectos[trayectosState.trayectos.length - 1] &&
-            <div className='text-lg border-b pb-4 flex gap-2 items-center'><LogOut className='w-5 h-5'/> Sal en <div  className={cn(
+            <div className='text-lg border-t pt-4 flex items-center justify-between'>
+              <div className='flex gap-2 items-center'>
+              <LogOut className='w-5 h-5'/> Sal en <div  className={cn(
                           'w-5 h-5 rounded-sm flex text-center items-center font-bold justify-center text-white',
                           trayectosState.trayectos[trayectosState.trayectos.length - 1].linea === 'A' && 'bg-lineaA',
                           trayectosState.trayectos[trayectosState.trayectos.length - 1].linea === 'B' && 'bg-lineaB',
                           trayectosState.trayectos[trayectosState.trayectos.length - 1].linea === 'C' && 'bg-lineaC',
                           trayectosState.trayectos[trayectosState.trayectos.length - 1].linea === 'D' && 'bg-lineaD',
                           trayectosState.trayectos[trayectosState.trayectos.length - 1].linea === 'E' && 'bg-lineaE',
-                          )}>{trayectosState.trayectos[trayectosState.trayectos.length - 1].linea}</div><span className='font-bold'>{trayectosState.trayectos[trayectosState.trayectos.length - 1].paradas[trayectosState.trayectos[trayectosState.trayectos.length - 1].paradas.length - 1].label}</span></div>
+                          )}>{trayectosState.trayectos[trayectosState.trayectos.length - 1].linea}</div><span className='font-bold'>{trayectosState.trayectos[trayectosState.trayectos.length - 1].paradas[trayectosState.trayectos[trayectosState.trayectos.length - 1].paradas.length - 1].label}</span>
+                          </div>
+                          <div className='flex gap-1'>
+                            
+                            {trayectosState.trayectos[trayectosState.trayectos.length - 1].paradas[trayectosState.trayectos[trayectosState.trayectos.length - 1].paradas.length - 1].hay_escalera == 1 && <StairsIcon className='text-black/50'/>}
+                            {trayectosState.trayectos[trayectosState.trayectos.length - 1].paradas[trayectosState.trayectos[trayectosState.trayectos.length - 1].paradas.length - 1].hay_mecanica == 1 && <EscalatorIcon className='text-black/50'/>}
+                            {trayectosState.trayectos[trayectosState.trayectos.length - 1].paradas[trayectosState.trayectos[trayectosState.trayectos.length - 1].paradas.length - 1].hay_ascensor == 1 && <ElevatorIcon className='text-black/50'/>}
+                            
+                          </div>
+                          
+                        </div>
             }
             
           </div>

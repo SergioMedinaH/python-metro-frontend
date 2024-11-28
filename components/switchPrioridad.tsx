@@ -10,18 +10,21 @@ export default function SwitchPrioridad({prioridadTransbordos, setPrioridadTrans
   const toggleSwitch = () => setPrioridadTransbordos(!prioridadTransbordos);
 
   return (
-    <div className="">
+    <div className="flex items-center justify-center w-full">
       <div
-        className="group inline-flex items-center justify-between gap-2 w-full px-4"
+        className="group inline-flex items-center gap-2 w-full px-4"
         data-state={prioridadTransbordos ? "checked" : "unchecked"}
       >
-        <span
+        {/*
+          <span
           id="switch-off-label"
           className="cursor-pointer text-right text-sm font-medium group-data-[state=checked]:text-muted-foreground/70"
           onClick={() => setPrioridadTransbordos(false)}
         >
           Menos tiempo
         </span>
+         */}
+        
         <Switch
           id="switch-09"
           checked={prioridadTransbordos}
