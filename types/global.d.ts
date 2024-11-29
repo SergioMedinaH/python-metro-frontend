@@ -1,4 +1,4 @@
-import internal from "stream";
+
 
 export interface Parada {
     value: string;

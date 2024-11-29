@@ -174,7 +174,7 @@ export default function Home() {
     setLoading(true);
     try {
       // Construir la URL con los parámetros de la solicitud GET
-      const url = `https://python-metro-api.vercel.app/api?paradaOrigen=${encodeURIComponent(paradaOrigen)}&paradaDestino=${encodeURIComponent(paradaDestino)}&hora=${time.hour.toString().padStart(2, '0')}:${time.minute.toString().padStart(2, '0')}&fecha=${date.getDay()}&prioridadTransbordos=${prioridadTransbordos.toString()}`;
+      const url = `https://python-metro-api.vercel.app/api?paradaOrigen=${encodeURIComponent(paradaOrigen)}&paradaDestino=${encodeURIComponent(paradaDestino)}&hora=${time.hour.toString().padStart(2, '0')}:${time.minute.toString().padStart(2, '0')}&fecha=${date.getDay()}`;
 
       // Realizar la solicitud GET a la API
       const response = await fetch(url);
