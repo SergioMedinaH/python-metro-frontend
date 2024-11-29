@@ -401,8 +401,8 @@ export default function Home() {
             }
             
           </div>
-          : <div className='flex items-center justify-center text-center border text-red-600 bg-red-50 border-red-600 rounded-md py-4 gap-2 mb-4'>
-          <ClockAlert className='w-4 h-4'/> <span className=''>La ruta no se encuentra disponible por cierre de las instalaciones</span>
+          : <div className='flex items-center justify-center text-center border text-red-600 bg-red-50 border-red-600 rounded-md py-4 gap-2 mb-4 px-2'>
+          <ClockAlert className='w-4 h-4'/> <span className=''>No hay rutas disponibles por cierre del metro</span>
        </div>}
           </>}
         </div>
